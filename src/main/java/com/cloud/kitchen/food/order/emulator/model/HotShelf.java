@@ -1,12 +1,13 @@
 package com.cloud.kitchen.food.order.emulator.model;
 
 import com.cloud.kitchen.food.order.emulator.dto.Order;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 
 public class HotShelf implements Shelf {
+
+    private final int CAPACITY = 15;
 
     private static Map<String, Order> orders;
     private static HotShelf hotShelf;
@@ -23,12 +24,17 @@ public class HotShelf implements Shelf {
     }
 
     @Override
-    public void add() {
+    public void add(Order order) {
 
     }
 
     @Override
     public void remove() {
+
+    }
+
+    @Override
+    public void display() {
 
     }
 

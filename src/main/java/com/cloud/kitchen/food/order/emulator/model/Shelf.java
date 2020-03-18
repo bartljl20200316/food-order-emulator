@@ -1,12 +1,14 @@
 package com.cloud.kitchen.food.order.emulator.model;
 
+import com.cloud.kitchen.food.order.emulator.dto.Order;
+
 public interface Shelf {
 
-    int CAPACITY = 15;
-
-    void add();
+    void add(Order order);
 
     void remove();
+
+    void display();
 
     boolean isFull();
 }

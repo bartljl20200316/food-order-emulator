@@ -23,6 +23,8 @@ public class OrderConsumerConfig {
     private String bootstrapServers;
     @Value("${max.poll.records}")
     private String maxPollRecords;
+    @Value("${kafka.consumer.poll.timeout}")
+    private long pollTimeOut;
 
     @Bean
     public Map<String, Object> consumerConfigs() {
@@ -47,6 +49,8 @@ public class OrderConsumerConfig {
         ConcurrentKafkaListenerContainerFactory<String, Order> factory =
                 new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
+        factory.getContainerProperties().setPollTimeout(pollTimeOut);
+        factory.setBatchListener(true);
 
         return factory;
     }

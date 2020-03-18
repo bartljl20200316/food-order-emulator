@@ -7,18 +7,12 @@ public class Order {
     private int shelfLife;
     private float decayRate;
 
-    private int onShelfTime;
-    private int age;
-    private int value;
+    private long onShelfTime;
 
     public Order() {}
 
-    public long getAge( ) {
-        return System.currentTimeMillis() - onShelfTime;
-    }
-
     public int getValue() {
-        int age = (int)(System.currentTimeMillis() - onShelfTime);
+        int age = (int)((System.currentTimeMillis() - onShelfTime) / 1000);
         return (shelfLife - age) - (int)(decayRate * age);
     }
 
@@ -57,6 +51,8 @@ public class Order {
     public void setDecayRate(float decayRate) {
         this.decayRate = decayRate;
     }
+
+    public void setOnShelfTime(long time) { this.onShelfTime = time; }
 
     @Override
     public String toString() {
