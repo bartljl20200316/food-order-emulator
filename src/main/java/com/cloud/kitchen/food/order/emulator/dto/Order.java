@@ -1,6 +1,8 @@
 package com.cloud.kitchen.food.order.emulator.dto;
 
-public class Order {
+import org.aspectj.weaver.ast.Or;
+
+public class Order implements Comparable<Order> {
 
     private String name;
     private ETemperature temp;
@@ -8,12 +10,13 @@ public class Order {
     private float decayRate;
 
     private long onShelfTime;
+    private float value;
 
     public Order() {}
 
-    public int getValue() {
-        int age = (int)((System.currentTimeMillis() - onShelfTime) / 1000);
-        return (shelfLife - age) - (int)(decayRate * age);
+    public float getValue() {
+        float age = (System.currentTimeMillis() - onShelfTime) / 1000;
+        return (shelfLife - age) - decayRate * age;
     }
 
     public float getNormalizedValue() {
@@ -62,5 +65,10 @@ public class Order {
                 ", shelfLife=" + shelfLife +
                 ", decayRate=" + decayRate +
                 '}';
+    }
+
+    @Override
+    public int compareTo(Order o) {
+        return Float.compare(o.getValue(), this.getValue());
     }
 }

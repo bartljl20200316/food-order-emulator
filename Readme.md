@@ -28,7 +28,10 @@ For windows, run following command to start zookeeper and kafka server:
 
 ## Run unit tests
 ```
-> mvn test
+> mvn clean test
 ```
+
+## Order Moving Rules
+
 
 

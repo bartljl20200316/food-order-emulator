@@ -1,6 +1,7 @@
 package com.cloud.kitchen.food.order.emulator;
 
 import com.cloud.kitchen.food.order.emulator.dto.Order;
+import com.cloud.kitchen.food.order.emulator.execution.DriverThread;
 import com.cloud.kitchen.food.order.emulator.kafka.consumer.OrderConsumer;
 import com.cloud.kitchen.food.order.emulator.kafka.producer.OrderProducer;
 import org.slf4j.Logger;
@@ -13,8 +14,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 import java.io.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import java.util.Random;
+import java.util.concurrent.*;
 
 
 import org.springframework.core.io.Resource;
@@ -55,6 +56,10 @@ public class OrderStreaming implements CommandLineRunner {
             jsonReader.endArray();
             //orderConsumer.setLatch(new CountDownLatch(count));
             //orderConsumer.getLatch().await(10000, TimeUnit.MILLISECONDS);
+
+            ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
+            int driveTime = new Random().ints(2, 11).limit(1).findFirst().getAsInt();
+            ScheduledFuture<?> scheduledFuture = executorService.scheduleAtFixedRate(new Thread(new DriverThread()), 5, driveTime, TimeUnit.SECONDS);
 
         } catch (Exception e) {
             e.printStackTrace();
