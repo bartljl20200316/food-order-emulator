@@ -5,9 +5,9 @@ A system that emulates the fulfillment of food orders in kitchen
 ## Getting Started
 
 ### Prerequisites
-```
-Kafka
-```
+* Maven
+* Kafka
+
 
 ### Install
 Download [Kafka](https://kafka.apache.org/quickstart) if local env don't have.
@@ -22,6 +22,7 @@ For windows, run following command to start zookeeper and kafka server:
 
 ## Run program
 ```
+> cd food-order-emulator
 > mvn spring-boot:run
 ```
 

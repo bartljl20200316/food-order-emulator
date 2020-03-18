@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 import java.io.*;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 
@@ -38,6 +39,7 @@ public class OrderStreaming implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
+
         try {
             Resource resource = resourceLoader.getResource("classpath:" + jsonFile);
             JsonReader jsonReader = new JsonReader(new InputStreamReader(resource.getInputStream()));
@@ -51,8 +53,8 @@ public class OrderStreaming implements CommandLineRunner {
             }
 
             jsonReader.endArray();
-
-            orderConsumer.getLatch().await(10000, TimeUnit.MILLISECONDS);
+            //orderConsumer.setLatch(new CountDownLatch(count));
+            //orderConsumer.getLatch().await(10000, TimeUnit.MILLISECONDS);
 
         } catch (Exception e) {
             e.printStackTrace();

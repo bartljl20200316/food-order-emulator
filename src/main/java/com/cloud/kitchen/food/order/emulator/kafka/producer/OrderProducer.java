@@ -6,8 +6,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.concurrent.ListenableFuture;
+import org.springframework.util.concurrent.ListenableFutureCallback;
 
 @Service
 public class OrderProducer {
@@ -22,8 +25,17 @@ public class OrderProducer {
 
     @Async
     public void send(Order order) {
-        logger.info("Sending order='{}'", order.toString());
-        kafkaTemplate.send(jsonTopic, order);
+        ListenableFuture<SendResult<String, Order>> future = kafkaTemplate.send(jsonTopic, order);
+        future.addCallback(new ListenableFutureCallback<SendResult<String, Order>>() {
+            @Override
+            public void onSuccess(SendResult<String, Order> result) {
+                logger.info("Sending order='{}'", order.toString());
+            }
+            @Override
+            public void onFailure(Throwable ex) {
+                logger.error(ex.getMessage());
+            }
+        });
     }
 
 }

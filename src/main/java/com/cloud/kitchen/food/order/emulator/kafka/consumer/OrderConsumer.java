@@ -16,20 +16,30 @@ public class OrderConsumer {
 
     private static final Logger logger = LoggerFactory.getLogger(OrderConsumer.class);
 
-    private CountDownLatch latch = new CountDownLatch(3);
+    private CountDownLatch latch;
 
     public CountDownLatch getLatch() {
         return latch;
     }
 
+    public void setLatch(CountDownLatch latch) {
+        this.latch = latch;
+    }
+
     @KafkaListener(topics = "${kafka.topic.json}")
     public void receive(List<Order> orders) {
         logger.info("received order='{}'", orders);
-        orders.forEach(
-                order -> System.out.println(order)
-        );
 
-        latch.countDown();
+        orders.forEach(order->{
+            //latch.countDown();
+        });
+
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
         /*Shelf shelf = KitchenUtils.dispatch(order);
         shelf.add(order);*/
     }
