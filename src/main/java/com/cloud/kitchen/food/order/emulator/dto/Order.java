@@ -1,6 +1,7 @@
 package com.cloud.kitchen.food.order.emulator.dto;
 
 import com.cloud.kitchen.food.order.emulator.model.Shelf;
+import java.util.Objects;
 
 public class Order implements Comparable<Order> {
 
@@ -80,6 +81,11 @@ public class Order implements Comparable<Order> {
         Order order = (Order) o;
         return order.getTemp().equals(temp) && order.getName().equals(name)
                 && order.getDecayRate() == decayRate && order.getShelfLife() == shelfLife;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, temp, shelfLife, decayRate);
     }
 
     @Override

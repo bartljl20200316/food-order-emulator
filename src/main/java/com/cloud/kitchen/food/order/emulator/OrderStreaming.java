@@ -42,8 +42,6 @@ public class OrderStreaming implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
 
-
-
         try {
             Resource resource = resourceLoader.getResource("classpath:" + jsonFile);
             JsonReader jsonReader = new JsonReader(new InputStreamReader(resource.getInputStream()));

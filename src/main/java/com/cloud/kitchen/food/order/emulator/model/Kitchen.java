@@ -14,7 +14,7 @@ public class Kitchen {
     private static final Logger logger = LoggerFactory.getLogger(Kitchen.class);
 
     private static volatile Kitchen instance;
-    private Shelf hotShelf, coldShelf, frozenShelf,overFlowShelf;
+    private Shelf hotShelf, coldShelf, frozenShelf, overFlowShelf;
 
     private Kitchen() {
         hotShelf = new Shelf(TempEnum.HOT, KitchenConsts.NORMAL_SHELF_CAPACITY);
@@ -61,8 +61,8 @@ public class Kitchen {
                 Order removed = removeOrder(order);
                 removed.getShelf().add(order);
             } else {
-                //TODO If not all shelves are full, cache the order and insert at later time
-                
+                //TODO If shelves free up, you may move an order back from the overflow shelf.
+
             }
         }
     }
@@ -88,13 +88,19 @@ public class Kitchen {
         }
 
         removedOrder.getShelf().display();
-        logger.info("Remove an order {} from {} shelf", removedOrder, removedOrder.getShelf().getType());
+        logger.info("All shelves are full, remove an order {} which value is {} from {} shelf",
+                removedOrder, removedOrder.getValue(), removedOrder.getShelf().getType());
 
         return removedOrder;
     }
 
-    private void moveOrder(PriorityBlockingQueue<Order> from, PriorityBlockingQueue<Order> to, Order order) {
-        //TODO If shelves free up, you may move an order back from the overflow shelf.
+    private void moveOrder(PriorityBlockingQueue<Order> from, PriorityBlockingQueue<Order> to) {
+        try {
+            to.put(from.take());
+        }catch (InterruptedException e) {
+            logger.error(e.getMessage());
+        }
+
     }
 
     private boolean isAllShelvesFull() {

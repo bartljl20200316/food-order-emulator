@@ -35,7 +35,7 @@ public class Shelf {
     }
 
     public void add(Order order) {
-        if(order.getTemp() == TempEnum.OVERFLOW) {
+        if(type == TempEnum.OVERFLOW) {
             order.setDecayRate(order.getDecayRate() * 2);
         }
 
