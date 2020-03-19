@@ -1,6 +1,5 @@
 package com.cloud.kitchen.food.order.emulator.execution;
 
-import com.cloud.kitchen.food.order.emulator.dto.Shelf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +13,6 @@ public class DriverThread implements Runnable{
 
     @Override
     public void run() {
-        // Pick up the order which has smallest value
-        Shelf.getInstance().removeMinValueOrder();
+        // Pick up the order
     }
 }

@@ -1,16 +1,16 @@
 package com.cloud.kitchen.food.order.emulator.dto;
 
-import org.aspectj.weaver.ast.Or;
+import com.cloud.kitchen.food.order.emulator.model.Shelf;
 
 public class Order implements Comparable<Order> {
 
     private String name;
-    private ETemperature temp;
+    private TempEnum temp;
     private int shelfLife;
     private float decayRate;
 
     private long onShelfTime;
-    private float value;
+    private Shelf shelf;
 
     public Order() {}
 
@@ -20,14 +20,14 @@ public class Order implements Comparable<Order> {
     }
 
     public float getNormalizedValue() {
-        return (float) getValue() / shelfLife;
+        return getValue() / shelfLife;
     }
 
     public String getName() {
         return name;
     }
 
-    public ETemperature getTemp() {
+    public TempEnum getTemp() {
         return temp;
     }
 
@@ -39,11 +39,13 @@ public class Order implements Comparable<Order> {
         return decayRate;
     }
 
+    public Shelf getShelf() { return shelf; }
+
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setTemp(ETemperature temp) {
+    public void setTemp(TempEnum temp) {
         this.temp = temp;
     }
 
@@ -57,6 +59,8 @@ public class Order implements Comparable<Order> {
 
     public void setOnShelfTime(long time) { this.onShelfTime = time; }
 
+    public void setShelf(Shelf shelf) { this.shelf = shelf; }
+
     @Override
     public String toString() {
         return "Order{" +
@@ -65,6 +69,17 @@ public class Order implements Comparable<Order> {
                 ", shelfLife=" + shelfLife +
                 ", decayRate=" + decayRate +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o == this) return true;
+        if(!(o instanceof Order)) {
+            return false;
+        }
+        Order order = (Order) o;
+        return order.getTemp().equals(temp) && order.getName().equals(name)
+                && order.getDecayRate() == decayRate && order.getShelfLife() == shelfLife;
     }
 
     @Override

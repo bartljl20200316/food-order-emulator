@@ -2,7 +2,7 @@ package com.cloud.kitchen.food.order.emulator.dto;
 
 import com.google.gson.annotations.SerializedName;
 
-public enum ETemperature {
+public enum TempEnum {
 
     @SerializedName("hot")
     HOT,
@@ -11,5 +11,7 @@ public enum ETemperature {
     COLD,
 
     @SerializedName("frozen")
-    FROZEN
+    FROZEN,
+
+    OVERFLOW
 }

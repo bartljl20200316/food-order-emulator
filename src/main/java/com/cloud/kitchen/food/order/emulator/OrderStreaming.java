@@ -4,6 +4,7 @@ import com.cloud.kitchen.food.order.emulator.dto.Order;
 import com.cloud.kitchen.food.order.emulator.execution.DriverThread;
 import com.cloud.kitchen.food.order.emulator.kafka.consumer.OrderConsumer;
 import com.cloud.kitchen.food.order.emulator.kafka.producer.OrderProducer;
+import com.cloud.kitchen.food.order.emulator.model.Kitchen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,8 @@ public class OrderStreaming implements CommandLineRunner {
     @Override
     public void run(String... strings) throws Exception {
 
+
+
         try {
             Resource resource = resourceLoader.getResource("classpath:" + jsonFile);
             JsonReader jsonReader = new JsonReader(new InputStreamReader(resource.getInputStream()));
@@ -59,7 +62,8 @@ public class OrderStreaming implements CommandLineRunner {
 
             ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
             int driveTime = new Random().ints(2, 11).limit(1).findFirst().getAsInt();
-            ScheduledFuture<?> scheduledFuture = executorService.scheduleAtFixedRate(new Thread(new DriverThread()), 5, driveTime, TimeUnit.SECONDS);
+            ScheduledFuture<?> scheduledFuture =
+                    executorService.scheduleAtFixedRate(new Thread(new DriverThread()), 5, driveTime, TimeUnit.SECONDS);
 
         } catch (Exception e) {
             e.printStackTrace();

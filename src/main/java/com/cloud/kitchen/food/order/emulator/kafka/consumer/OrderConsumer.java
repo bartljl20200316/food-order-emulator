@@ -3,7 +3,8 @@ package com.cloud.kitchen.food.order.emulator.kafka.consumer;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import com.cloud.kitchen.food.order.emulator.dto.Shelf;
+import com.cloud.kitchen.food.order.emulator.model.Kitchen;
+import com.cloud.kitchen.food.order.emulator.model.Shelf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -31,7 +32,7 @@ public class OrderConsumer {
 
         orders.forEach(order->{
             //latch.countDown();
-            Shelf.getInstance().dispatch(order);
+            Kitchen.getInstance().dispatch(order);
         });
 
         try {
