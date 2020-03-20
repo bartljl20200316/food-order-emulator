@@ -20,6 +20,7 @@ For windows, run following command to start zookeeper and kafka server:
 ## Run program
 ```
 > cd food-order-emulator
+> mvn clean install
 > mvn spring-boot:run
 ```
 
