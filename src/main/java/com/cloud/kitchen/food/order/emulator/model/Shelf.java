@@ -43,12 +43,22 @@ public class Shelf {
         order.setShelf(this);
         orders.put(order);
 
+        logger.info("Add an order {} to {} shelf", order, type);
         display();
     }
 
-    public void remove(Order order) {
-        orders.remove(order);
-        display();
+    public boolean remove(Order order) {
+        if(orders.remove(order)) {
+            logger.info("Remove an order {} from {} shelf", order, type);
+            display();
+            return true;
+        }
+
+        return false;
+    }
+
+    public Order getMinValueOrder() {
+        return orders.peek();
     }
 
     public boolean isFull() {
@@ -61,9 +71,9 @@ public class Shelf {
 
     public void display() {
         logger.info("--------------Shelf Content--------------");
-        orders.forEach(order -> {
-            logger.info("Order is {}, normalized value is {}", order.toString(), order.getNormalizedValue());
-        });
+        orders.forEach(order ->
+                logger.info("Order is {}, normalized value is {}", order, order.getNormalizedValue())
+        );
         logger.info("--------------Shelf Content--------------");
     }
 }

@@ -3,7 +3,7 @@ package com.cloud.kitchen.food.order.emulator.model;
 import com.cloud.kitchen.food.order.emulator.dto.TempEnum;
 import com.cloud.kitchen.food.order.emulator.dto.Order;
 import com.cloud.kitchen.food.order.emulator.utils.KitchenConsts;
-import org.aspectj.weaver.ast.Or;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +13,7 @@ public class Kitchen {
 
     private static final Logger logger = LoggerFactory.getLogger(Kitchen.class);
 
-    private static volatile Kitchen instance;
+    private static Kitchen instance;
     private Shelf hotShelf, coldShelf, frozenShelf, overFlowShelf;
 
     private Kitchen() {
@@ -32,22 +32,23 @@ public class Kitchen {
 
     public void dispatch(Order order) {
         boolean isDispatched = false;
+        TempEnum temp = order.getTemp();
 
-        switch (order.getTemp()) {
+        switch (temp) {
             case HOT:
-                if(hotShelf.getOrders().size() < KitchenConsts.NORMAL_SHELF_CAPACITY) {
+                if(!hotShelf.isFull()) {
                     hotShelf.add(order);
                     isDispatched = true;
                 }
                 break;
             case COLD:
-                if(coldShelf.getOrders().size() < KitchenConsts.NORMAL_SHELF_CAPACITY) {
+                if(!coldShelf.isFull()) {
                     coldShelf.add(order);
                     isDispatched = true;
                 }
                 break;
             case FROZEN:
-                if(frozenShelf.getOrders().size() < KitchenConsts.NORMAL_SHELF_CAPACITY) {
+                if(!frozenShelf.isFull()) {
                     frozenShelf.add(order);
                     isDispatched = true;
                 }
@@ -55,51 +56,66 @@ public class Kitchen {
         }
 
         if(!isDispatched) {
-            if(overFlowShelf.getOrders().size() < KitchenConsts.OVERFLOW_SHELF_CAPACITY) {
+            if(!overFlowShelf.isFull()) {
                 overFlowShelf.add(order);
-            } else if(isAllShelvesFull()) {
-                Order removed = removeOrder(order);
-                removed.getShelf().add(order);
             } else {
-                //TODO If shelves free up, you may move an order back from the overflow shelf.
-
+                if(isAllShelvesFull()) {
+                    Order removed = removeOrder();
+                    if(removed != null) {
+                        Shelf removedFromShelf = removed.getShelf();
+                        if(removedFromShelf.equals(TempEnum.OVERFLOW) || removedFromShelf.getType().equals(temp)) {
+                            removedFromShelf.add(order);
+                        }else {
+                            moveOrder(overFlowShelf, removedFromShelf, removedFromShelf.getType());
+                            overFlowShelf.add(order);
+                        }
+                    }
+                } else {
+                    if(temp != TempEnum.HOT && !hotShelf.isFull()) {
+                        moveOrder(overFlowShelf, hotShelf, temp);
+                    }
+                }
             }
         }
     }
 
-    // If all shelves are full, remove order which value is smallest among that type shelf
-    private Order removeOrder(Order order) {
-        Order removedOrder = null;
+    // If all shelves are full, remove order which value is smallest among all shelves
+    private Order removeOrder() {
+        Order order = null;
+        Shelf shelf = null;
 
-        try {
-            switch (order.getTemp()) {
-                case HOT:
-                    removedOrder = hotShelf.getOrders().take();
-                    break;
-                case COLD:
-                    removedOrder = coldShelf.getOrders().take();
-                    break;
-                case FROZEN:
-                    removedOrder = frozenShelf.getOrders().take();
-                    break;
+        PriorityBlockingQueue<Order> queue = new PriorityBlockingQueue<>();
+        queue.add(hotShelf.getMinValueOrder());
+        queue.add(coldShelf.getMinValueOrder());
+        queue.add(frozenShelf.getMinValueOrder());
+        queue.add(overFlowShelf.getMinValueOrder());
+
+        order = queue.peek();
+        if(order != null) {
+            shelf = order.getShelf();
+            if(shelf.remove(order)) {
+                logger.info("All shelves are full, remove an order {} which value is {} from {} shelf",
+                        order, order.getValue(), shelf.getType());
             }
-        }catch (InterruptedException e) {
-            logger.error(e.getMessage());
         }
 
-        removedOrder.getShelf().display();
-        logger.info("All shelves are full, remove an order {} which value is {} from {} shelf",
-                removedOrder, removedOrder.getValue(), removedOrder.getShelf().getType());
-
-        return removedOrder;
+        return order;
     }
 
-    private void moveOrder(PriorityBlockingQueue<Order> from, PriorityBlockingQueue<Order> to) {
-        try {
-            to.put(from.take());
-        }catch (InterruptedException e) {
-            logger.error(e.getMessage());
-        }
+    private void moveOrder(Shelf from, Shelf to, TempEnum type) {
+        from.getOrders().forEach(order -> {
+            if(type.equals(order.getTemp()) && from.remove(order)) {
+                to.add(order);
+                if(from.getType().equals(TempEnum.OVERFLOW)) {
+                    order.setDecayRate(order.getDecayRate() / 2);
+                }
+
+                logger.info("Move an order {} from {} Shelf to {} Shelf", order, from.getType(), to.getType());
+                return;
+            }
+        });
+
+        //TODO If not find same temp type of order
 
     }
 
