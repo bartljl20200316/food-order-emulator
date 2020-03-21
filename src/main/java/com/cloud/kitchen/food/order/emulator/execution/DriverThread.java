@@ -16,10 +16,13 @@ public class DriverThread implements Runnable{
 
     @Override
     public void run() {
-        Shelf shelf = Kitchen.getInstance().getShelfMap().get(getRandomShelf());
-        Order order = pickUp(shelf.getOrders());
-        if(order != null) {
-            logger.info("Drive {} picked up the order {}", Thread.currentThread().getName(), order);
+        synchronized (this) {
+            Shelf shelf = Kitchen.getInstance().getShelfMap().get(getRandomShelf());
+            Order order = getRandomOrder(shelf.getOrders());
+            if(order != null) {
+                shelf.remove(order);
+                logger.info("Drive {} picked up the order {}", Thread.currentThread().getName(), order);
+            }
         }
     }
 
@@ -29,7 +32,7 @@ public class DriverThread implements Runnable{
      * @param orders
      * @return
      */
-    private synchronized Order pickUp(PriorityBlockingQueue<Order> orders) {
+    private Order getRandomOrder(PriorityBlockingQueue<Order> orders) {
         if(orders.size() == 0) {
             return null;
         }
