@@ -3,7 +3,6 @@
 A system that emulates the fulfillment of food orders in kitchen
 
 ## Prerequisites
-* Maven
 * Kafka
 
 ### Install
@@ -19,22 +18,35 @@ For windows, run following command to start zookeeper and kafka server:
 > bin\windows\kafka-server-start.bat config\server.properties
 ```
 
-## Run program
-Using maven plugin
+## Build
+For Unix
 ```
 > cd food-order-emulator
-> mvn clean install
-> mvn spring-boot:run
+> ./mvnw clean install
+```
+For windows
+```
+> cd food-order-emulator
+> ./mvnw.cmd clean install
+```
+
+## Run program
+Unix
+```
+> ./mvnw spring-boot:run
+```
+Windows
+```
+> ./mvnw.cmd spring-boot:run
 ```
 or
 ```
-> cd food-order-emulator
 > java -jar target/food-order-emulator-0.0.1-SNAPSHOT.jar
 ```
 
 ## Run unit tests
 ```
-> mvn clean test
+> ./mvnw clean test
 ```
 Test coverage (Jacoco) report will be in:
 ```
