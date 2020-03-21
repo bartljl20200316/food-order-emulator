@@ -20,6 +20,8 @@ public class Shelf {
     public Shelf(TempEnum type, int capacity) {
         this.type = type;
         this.capacity = capacity;
+
+        orders = new PriorityBlockingQueue<>();
     }
 
     public TempEnum getType() {

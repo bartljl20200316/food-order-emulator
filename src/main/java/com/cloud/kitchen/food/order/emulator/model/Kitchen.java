@@ -73,25 +73,25 @@ public class Kitchen {
     }
 
     // If all shelves are full, remove order which value is smallest among all shelves
-    private Order removeShelfOrder() {
-        Order order;
+    public synchronized Order removeShelfOrder() {
+        Order minOrder = null;
         Shelf shelf;
 
-        PriorityBlockingQueue<Order> queue = new PriorityBlockingQueue<>();
-        queue.add(hotShelf.getMinValueOrder());
-        queue.add(coldShelf.getMinValueOrder());
-        queue.add(frozenShelf.getMinValueOrder());
-        queue.add(overFlowShelf.getMinValueOrder());
-
-        order = queue.peek();
-        if(order != null) {
-            shelf = order.getShelf();
-            if(shelf.remove(order)) {
-                return order;
+        for(Shelf s : shelfMap.values()) {
+            if((s.getMinValueOrder() != null) &&
+                    (minOrder == null || (minOrder.getValue() > s.getMinValueOrder().getValue()))) {
+                minOrder = s.getMinValueOrder();
             }
         }
 
-        return order;
+        if(minOrder != null) {
+            shelf = minOrder.getShelf();
+            if(shelf.remove(minOrder)) {
+                return minOrder;
+            }
+        }
+
+        return minOrder;
     }
 
     private boolean moveOrder(Shelf from, Shelf to, TempEnum type) {

@@ -1,6 +1,7 @@
-package com.cloud.kitchen.food.order.emulator.kafka.producer;
+package com.cloud.kitchen.food.order.emulator.config;
 
 import com.cloud.kitchen.food.order.emulator.dto.Order;
+import com.cloud.kitchen.food.order.emulator.services.kafka.OrderProducer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.beans.factory.annotation.Value;

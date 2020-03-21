@@ -10,6 +10,8 @@ A system that emulates the fulfillment of food orders in kitchen
 Download [Kafka](https://kafka.apache.org/quickstart) if local env don't have.
 
 ### Start Kafka
+Kafka server should be started before running program or unit test.
+
 For windows, run following command to start zookeeper and kafka server:
 ```
 > cd kafka_2.12-2.4.1\
@@ -18,10 +20,16 @@ For windows, run following command to start zookeeper and kafka server:
 ```
 
 ## Run program
+Using maven plugin
 ```
 > cd food-order-emulator
 > mvn clean install
 > mvn spring-boot:run
+```
+or
+```
+> cd food-order-emulator
+> java -jar target/food-order-emulator-0.0.1-SNAPSHOT.jar
 ```
 
 ## Run unit tests
@@ -30,7 +38,7 @@ For windows, run following command to start zookeeper and kafka server:
 ```
 Test coverage (Jacoco) report will be in:
 ```
-
+target/jacoco-report
 ```
 
 ## Order Moving Strategy

@@ -1,5 +1,6 @@
-package com.cloud.kitchen.food.order.emulator.kafka.consumer;
+package com.cloud.kitchen.food.order.emulator.config;
 
+import com.cloud.kitchen.food.order.emulator.services.kafka.OrderConsumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;

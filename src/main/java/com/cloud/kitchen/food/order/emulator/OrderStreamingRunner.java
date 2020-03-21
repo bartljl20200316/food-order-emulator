@@ -2,9 +2,9 @@ package com.cloud.kitchen.food.order.emulator;
 
 import com.cloud.kitchen.food.order.emulator.dto.Order;
 import com.cloud.kitchen.food.order.emulator.execution.DriverThread;
-import com.cloud.kitchen.food.order.emulator.kafka.consumer.OrderConsumer;
-import com.cloud.kitchen.food.order.emulator.kafka.producer.OrderProducer;
-import com.cloud.kitchen.food.order.emulator.model.Kitchen;
+import com.cloud.kitchen.food.order.emulator.services.kafka.OrderConsumer;
+import com.cloud.kitchen.food.order.emulator.services.kafka.OrderProducer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +23,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 @Component
-public class OrderStreaming implements CommandLineRunner {
+public class OrderStreamingRunner implements CommandLineRunner {
 
-    private static final Logger logger = LoggerFactory.getLogger(OrderStreaming.class);
+    private static final Logger logger = LoggerFactory.getLogger(OrderStreamingRunner.class);
 
     @Value("${orders.json.file.name}")
     private String jsonFile;
@@ -58,13 +58,12 @@ public class OrderStreaming implements CommandLineRunner {
             //orderConsumer.setLatch(new CountDownLatch(count));
             //orderConsumer.getLatch().await(10000, TimeUnit.MILLISECONDS);
 
-            ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
             int driveTime = new Random().ints(2, 11).limit(1).findFirst().getAsInt();
-            ScheduledFuture<?> scheduledFuture =
-                    executorService.scheduleAtFixedRate(new Thread(new DriverThread()), 5, driveTime, TimeUnit.SECONDS);
+            ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
+            executorService.scheduleAtFixedRate(new DriverThread(), 5, driveTime, TimeUnit.SECONDS);
 
         } catch (Exception e) {
-            e.printStackTrace();
+           logger.error(e.getMessage());
         }
     }
 }
