@@ -1,4 +1,4 @@
-package com.cloud.kitchen.food.order.emulator.config;
+package com.cloud.kitchen.food.order.emulator.config.kafka;
 
 import com.cloud.kitchen.food.order.emulator.dto.Order;
 import com.cloud.kitchen.food.order.emulator.services.kafka.OrderProducer;

@@ -11,7 +11,7 @@ Download [Kafka](https://kafka.apache.org/quickstart) if local env don't have.
 ### Start Kafka
 Kafka server should be started before running program or unit test.
 
-For windows, run following command to start zookeeper and kafka server:
+For windows, run following command in two terminals to start zookeeper and kafka server:
 ```
 > cd kafka_2.12-2.4.1\
 > bin\windows\zookeeper-server-start.bat config\zookeeper.properties
@@ -27,7 +27,7 @@ For Unix
 For windows
 ```
 > cd food-order-emulator
-> ./mvnw.cmd clean install
+> mvnw.cmd clean install
 ```
 
 ## Run program
@@ -37,7 +37,7 @@ Unix
 ```
 Windows
 ```
-> ./mvnw.cmd spring-boot:run
+> mvnw.cmd spring-boot:run
 ```
 or
 ```

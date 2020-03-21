@@ -13,18 +13,18 @@ public class Shelf {
 
     private static final Logger logger = LoggerFactory.getLogger(Shelf.class);
 
-    private TempEnum type;
+    private String type;
     private int capacity;
     private PriorityBlockingQueue<Order> orders;
 
-    public Shelf(TempEnum type, int capacity) {
+    public Shelf(String type, int capacity) {
         this.type = type;
         this.capacity = capacity;
 
         orders = new PriorityBlockingQueue<>();
     }
 
-    public TempEnum getType() {
+    public String getType() {
         return type;
     }
 
@@ -37,7 +37,7 @@ public class Shelf {
     }
 
     public void add(Order order) {
-        if(type == TempEnum.OVERFLOW) {
+        if(type.equals(TempEnum.OVERFLOW.toString())) {
             order.setDecayRate(order.getDecayRate() * 2);
         }
 
@@ -64,7 +64,7 @@ public class Shelf {
     }
 
     public boolean isFull() {
-        if(type == TempEnum.OVERFLOW) {
+        if(type.equals(TempEnum.OVERFLOW.toString())) {
             return orders.size() == KitchenConsts.OVERFLOW_SHELF_CAPACITY;
         }else {
             return orders.size() == KitchenConsts.NORMAL_SHELF_CAPACITY;
@@ -73,9 +73,7 @@ public class Shelf {
 
     public void display() {
         logger.info("--------------Shelf Content--------------");
-        orders.forEach(order ->
-                logger.info("Order is {}, normalized value is {}", order, order.getNormalizedValue())
-        );
+        orders.forEach(order -> logger.info("Order is {}, normalized value is {}", order, order.getNormalizedValue()));
         logger.info("--------------Shelf Content--------------");
     }
 }

@@ -28,10 +28,7 @@ public class OrderConsumer {
     @KafkaListener(topics = "${kafka.topic.json}")
     public void receive(List<Order> orders) {
         logger.info("received order='{}'", orders);
-
-        orders.forEach(order->{
-            Kitchen.getInstance().dispatch(order);
-        });
+        orders.forEach(order-> Kitchen.getInstance().dispatch(order));
 
         try {
             Thread.sleep(1000);

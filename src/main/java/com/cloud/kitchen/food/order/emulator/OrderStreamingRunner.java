@@ -59,7 +59,7 @@ public class OrderStreamingRunner implements CommandLineRunner {
             //orderConsumer.getLatch().await(10000, TimeUnit.MILLISECONDS);
 
             int driveTime = new Random().ints(2, 11).limit(1).findFirst().getAsInt();
-            ScheduledExecutorService executorService = Executors.newScheduledThreadPool(2);
+            ScheduledExecutorService executorService = Executors.newScheduledThreadPool(5);
             executorService.scheduleAtFixedRate(new DriverThread(), 5, driveTime, TimeUnit.SECONDS);
 
         } catch (Exception e) {
