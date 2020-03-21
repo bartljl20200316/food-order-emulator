@@ -71,14 +71,17 @@ public class Shelf {
         }
     }
 
+    public boolean isEmpty() {
+        return orders.isEmpty();
+    }
+
     public void display() {
-        if(orders.size() > 0) {
-            logger.info("--------------Shelf Content--------------");
+        if(!orders.isEmpty()) {
+            logger.info("--------------{} Shelf Content--------------", type);
             orders.forEach(order -> logger.info("Order is {}, normalized value is {}", order, order.getNormalizedValue()));
-            logger.info("--------------Shelf Content--------------");
+            logger.info("--------------{} Shelf Content--------------", type);
         }else {
             logger.info("{} shelf is empty.", type);
         }
-
     }
 }

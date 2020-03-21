@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Kitchen {
 
@@ -22,6 +23,8 @@ public class Kitchen {
 
     private Map<String, Shelf> shelfMap;
     public static final List<String> SHELF_TYPE_LIST = Arrays.asList(new String[] {"HOT", "COLD", "FROZEN", "OVERFLOW"});
+
+    private AtomicInteger totalRemoved = new AtomicInteger(0);
 
     private Kitchen() {
         shelfMap = new ConcurrentHashMap<>();
@@ -77,6 +80,7 @@ public class Kitchen {
                     Shelf s = removed.getShelf();
                     logger.info("All shelves are full, remove an order {} whose value is {} from {} shelf",
                             removed, removed.getValue(), s.getType());
+                    logger.info("Total removed order is {}", totalRemoved);
                     if(s.getType().equals(TempEnum.OVERFLOW.toString()) || s.getType().equals(temp.toString())) {
                         s.add(order);
                         return;
@@ -112,6 +116,7 @@ public class Kitchen {
         if(minOrder != null) {
             shelf = minOrder.getShelf();
             if(shelf.remove(minOrder)) {
+                totalRemoved.getAndIncrement();
                 return minOrder;
             }
         }
@@ -134,9 +139,18 @@ public class Kitchen {
         return false;
     }
 
-    private boolean isAllShelvesFull() {
+    public boolean isAllShelvesFull() {
         for (Shelf shelf : shelfMap.values()) {
             if(!shelf.isFull()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public boolean isAllShelvesEmpty() {
+        for (Shelf shelf : shelfMap.values()) {
+            if(!shelf.isEmpty()) {
                 return false;
             }
         }

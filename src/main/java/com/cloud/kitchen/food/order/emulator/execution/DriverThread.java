@@ -9,21 +9,30 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class DriverThread implements Runnable{
+public class DriverThread implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(DriverThread.class);
 
+    AtomicInteger totalPicked = new AtomicInteger(0);
+
     @Override
     public void run() {
-        synchronized (this) {
-            Shelf shelf = Kitchen.getInstance().getShelfMap().get(getRandomShelf());
-            Order order = getRandomOrder(shelf.getOrders());
-            if(order != null) {
-                shelf.remove(order);
-                logger.info("Drive {} picked up the order {}", Thread.currentThread().getName(), order);
-            }
+        if(Kitchen.getInstance().isAllShelvesEmpty()) {
+            return;
         }
+
+        int time = ThreadLocalRandom.current().nextInt(2, 11);
+        logger.info("Driver {} needs {} seconds to arrive to pick up order", Thread.currentThread().getId(), time);
+        try {
+            Thread.sleep(time * 1000L );
+        } catch (InterruptedException e) {
+            logger.error(e.getMessage());
+            Thread.currentThread().interrupt();
+        }
+
+        pickUp();
     }
 
     /**
@@ -33,7 +42,7 @@ public class DriverThread implements Runnable{
      * @return
      */
     private Order getRandomOrder(PriorityBlockingQueue<Order> orders) {
-        if(orders.size() == 0) {
+        if(orders.isEmpty()) {
             return null;
         }
         int randomIndex = ThreadLocalRandom.current().nextInt(orders.size());
@@ -52,4 +61,16 @@ public class DriverThread implements Runnable{
     private String getRandomShelf() {
         return Kitchen.SHELF_TYPE_LIST.get(ThreadLocalRandom.current().nextInt(Kitchen.SHELF_TYPE_LIST.size()));
     }
+
+    private void pickUp() {
+        Shelf shelf = Kitchen.getInstance().getShelfMap().get(getRandomShelf());
+        Order order = getRandomOrder(shelf.getOrders());
+        if(order != null) {
+            shelf.remove(order);
+            totalPicked.getAndIncrement();
+            logger.info("Driver {} picked up the order {}", Thread.currentThread().getId(), order);
+            logger.info("Total picked up order is {}", totalPicked);
+        }
+    }
+
 }

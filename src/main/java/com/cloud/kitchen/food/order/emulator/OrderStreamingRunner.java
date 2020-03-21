@@ -15,7 +15,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 import java.io.*;
-import java.util.Random;
 import java.util.concurrent.*;
 
 
@@ -49,18 +48,19 @@ public class OrderStreamingRunner implements CommandLineRunner {
 
             logger.info("Start streaming orders...");
             jsonReader.beginArray();
+            int totalOrders = 0;
             while (jsonReader.hasNext()){
                 Order order = gson.fromJson(jsonReader, Order.class);
+                totalOrders++;
                 orderProducer.send(order);
             }
 
             jsonReader.endArray();
-            //orderConsumer.setLatch(new CountDownLatch(count));
-            //orderConsumer.getLatch().await(10000, TimeUnit.MILLISECONDS);
 
-            int driveTime = new Random().ints(2, 11).limit(1).findFirst().getAsInt();
-            ScheduledExecutorService executorService = Executors.newScheduledThreadPool(5);
-            executorService.scheduleAtFixedRate(new DriverThread(), 5, driveTime, TimeUnit.SECONDS);
+            logger.info("Total order number is {}", totalOrders);
+
+            ScheduledExecutorService executorService = Executors.newScheduledThreadPool(10);
+            executorService.scheduleAtFixedRate(new DriverThread(), 3, 1, TimeUnit.SECONDS);
 
         } catch (Exception e) {
            logger.error(e.getMessage());
