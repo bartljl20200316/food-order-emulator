@@ -22,7 +22,7 @@ public class ScheduledTasks {
     /**
      * Orders that have reached a value of zero are considered waste and should be removed from the shelves.
      */
-    @Scheduled(fixedRate = 1000, initialDelay = 2000)
+    @Scheduled(fixedRate = 500, initialDelay = 2000)
     public void checkOrderValue() {
         for(Shelf s : Kitchen.getInstance().getShelfMap().values()) {
             checkZeroValue(s.getOrders());

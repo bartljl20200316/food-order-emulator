@@ -19,14 +19,18 @@ public class DriverThread implements Runnable {
 
     @Override
     public void run() {
-        if(Kitchen.getInstance().isAllShelvesEmpty()) {
-            logger.info("All the shelves are empty, total picked up orders is {}, total wasted order is {}",
-                    totalPicked, Kitchen.getInstance().getTotalRemoved().get() + ScheduledTasks.getTotalZero());
-            return;
+        int time = 0;
+        synchronized (this) {
+            if(Kitchen.getInstance().isAllShelvesEmpty()) {
+                logger.info("All the shelves are empty, total picked up orders is {}, total wasted order is {}",
+                        totalPicked, Kitchen.getInstance().getTotalRemoved().get() + ScheduledTasks.getTotalZero());
+                System.exit(0);
+            }
+
+            time = ThreadLocalRandom.current().nextInt(2, 11);
+            logger.info("Driver {} needs {} seconds to arrive to pick up order", Thread.currentThread().getId(), time);
         }
 
-        int time = ThreadLocalRandom.current().nextInt(2, 11);
-        logger.info("Driver {} needs {} seconds to arrive to pick up order", Thread.currentThread().getId(), time);
         try {
             Thread.sleep(time * 1000L );
         } catch (InterruptedException e) {

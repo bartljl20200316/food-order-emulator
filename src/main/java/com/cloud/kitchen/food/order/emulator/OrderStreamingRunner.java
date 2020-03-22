@@ -66,7 +66,7 @@ public class OrderStreamingRunner implements CommandLineRunner {
             ScheduledExecutorService executorService = Executors.newScheduledThreadPool(driverNum);
             Runnable task = new DriverThread();
             for(int i = 0; i < driverNum; i++) {
-                executorService.scheduleWithFixedDelay(task, 1, 1, TimeUnit.SECONDS);
+                executorService.scheduleWithFixedDelay(task, 5, 1, TimeUnit.SECONDS);
             }
 
         } catch (Exception e) {

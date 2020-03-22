@@ -2,7 +2,11 @@
 
 A system that emulates the fulfillment of food orders in kitchen
 
+## Author
+Jialong Li
+
 ## Prerequisites
+* JDK 1.8
 * Maven
 * Kafka
 
@@ -20,25 +24,15 @@ For windows, run following command in two terminals to start zookeeper and kafka
 ```
 
 ## Build
-For Unix
 ```
 > cd food-order-emulator
-> ./mvnw clean install
-```
-For windows
-```
-> cd food-order-emulator
-> mvnw.cmd clean install
+> mvn clean install
 ```
 
 ## Run program
-Unix
+with maven plugin
 ```
-> ./mvnw spring-boot:run
-```
-Windows
-```
-> mvnw.cmd spring-boot:run
+> mvn spring-boot:run
 ```
 or
 ```
@@ -63,5 +57,10 @@ The report will be in target/site/jacoco/index.html
 temp is same as upcoming order, put upcoming order on the same shelf. 
 5. Otherwise, move an order from overflow shelf to the shelf which discarded order at step 3.
 Then put the upcoming order to overflow shelf.
+
+## Result
+When my program finished after a while, it will display a log at the end of the terminal, the sum of two numbers will be 
+equal to total number of orders.\
+"_**All the shelves are empty, total picked up orders is xxx, total wasted order is xxx**_"
 
 
