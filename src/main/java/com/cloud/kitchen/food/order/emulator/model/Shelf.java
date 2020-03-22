@@ -77,9 +77,9 @@ public class Shelf {
 
     public void display() {
         if(!orders.isEmpty()) {
-            logger.info("--------------{} Shelf Content--------------", type);
+            logger.info("--------------{} Shelf Content Start--------------", type);
             orders.forEach(order -> logger.info("Order is {}, normalized value is {}", order, order.getNormalizedValue()));
-            logger.info("--------------{} Shelf Content--------------", type);
+            logger.info("--------------{} Shelf Content End----------------", type);
         }else {
             logger.info("{} shelf is empty.", type);
         }

@@ -3,6 +3,7 @@
 A system that emulates the fulfillment of food orders in kitchen
 
 ## Prerequisites
+* Maven
 * Kafka
 
 ### Install
@@ -46,12 +47,13 @@ or
 
 ## Run unit tests
 ```
-> ./mvnw clean test
+> mvn clean test
 ```
-Test coverage (Jacoco) report will be in:
+Generate test coverage (Jacoco) report:
 ```
-target/jacoco-report
+> mvn clean verify
 ```
+The report will be in target/site/jacoco/index.html
 
 ## Order Moving Strategy
 1. Order is placed on their corresponding shelf according to their temp if the shelf is not full. 

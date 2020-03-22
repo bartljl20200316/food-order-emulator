@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -17,17 +18,20 @@ import com.google.gson.stream.JsonReader;
 import java.io.*;
 import java.util.concurrent.*;
 
-
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 @Component
+@Profile("!test")
 public class OrderStreamingRunner implements CommandLineRunner {
 
     private static final Logger logger = LoggerFactory.getLogger(OrderStreamingRunner.class);
 
     @Value("${orders.json.file.name}")
     private String jsonFile;
+
+    @Value("${driver.number}")
+    private int driverNum;
 
     @Autowired
     private ResourceLoader resourceLoader;
@@ -59,8 +63,11 @@ public class OrderStreamingRunner implements CommandLineRunner {
 
             logger.info("Total order number is {}", totalOrders);
 
-            ScheduledExecutorService executorService = Executors.newScheduledThreadPool(10);
-            executorService.scheduleAtFixedRate(new DriverThread(), 3, 1, TimeUnit.SECONDS);
+            ScheduledExecutorService executorService = Executors.newScheduledThreadPool(driverNum);
+            Runnable task = new DriverThread();
+            for(int i = 0; i < driverNum; i++) {
+                executorService.scheduleWithFixedDelay(task, 1, 1, TimeUnit.SECONDS);
+            }
 
         } catch (Exception e) {
            logger.error(e.getMessage());

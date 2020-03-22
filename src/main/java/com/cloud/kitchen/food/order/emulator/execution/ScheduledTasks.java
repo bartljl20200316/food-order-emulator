@@ -17,7 +17,7 @@ public class ScheduledTasks {
 
     private static final Logger logger = LoggerFactory.getLogger(ScheduledTasks.class);
 
-    private int totalZero = 0;
+    private static int totalZero = 0;
 
     /**
      * Orders that have reached a value of zero are considered waste and should be removed from the shelves.
@@ -29,7 +29,7 @@ public class ScheduledTasks {
         }
     }
 
-    private void checkZeroValue(PriorityBlockingQueue<Order> orders) {
+    private static void checkZeroValue(PriorityBlockingQueue<Order> orders) {
         Iterator<Order> it = orders.iterator();
         while(it.hasNext()) {
             Order order = it.next();
@@ -38,8 +38,12 @@ public class ScheduledTasks {
                 logger.info("Order {} value reached 0, considered waste and removed from shelf", order);
                 Shelf shelf = order.getShelf();
                 shelf.remove(order);
-                logger.info("Total 0 value order is {}", totalZero);
+                logger.info("Total zero value order is {}", totalZero);
             }
         }
+    }
+
+    public static int getTotalZero() {
+        return totalZero;
     }
 }

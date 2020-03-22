@@ -50,6 +50,8 @@ public class Kitchen {
         return shelfMap;
     }
 
+    public AtomicInteger getTotalRemoved() { return totalRemoved;}
+
     /**
      * Dispatch an order according to the following rule:
      *
@@ -62,7 +64,7 @@ public class Kitchen {
      *
      * @param order
      */
-    public void dispatch(Order order) {
+    public synchronized void dispatch(Order order) {
         TempEnum temp = order.getTemp();
         Shelf shelf = shelfMap.get(temp.toString());
 
@@ -80,7 +82,7 @@ public class Kitchen {
                     Shelf s = removed.getShelf();
                     logger.info("All shelves are full, remove an order {} whose value is {} from {} shelf",
                             removed, removed.getValue(), s.getType());
-                    logger.info("Total removed order is {}", totalRemoved);
+                    logger.info("Total removed order is {}", totalRemoved.get());
                     if(s.getType().equals(TempEnum.OVERFLOW.toString()) || s.getType().equals(temp.toString())) {
                         s.add(order);
                         return;

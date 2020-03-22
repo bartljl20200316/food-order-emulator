@@ -20,6 +20,8 @@ public class DriverThread implements Runnable {
     @Override
     public void run() {
         if(Kitchen.getInstance().isAllShelvesEmpty()) {
+            logger.info("All the shelves are empty, total picked up orders is {}, total wasted order is {}",
+                    totalPicked, Kitchen.getInstance().getTotalRemoved().get() + ScheduledTasks.getTotalZero());
             return;
         }
 
@@ -62,7 +64,7 @@ public class DriverThread implements Runnable {
         return Kitchen.SHELF_TYPE_LIST.get(ThreadLocalRandom.current().nextInt(Kitchen.SHELF_TYPE_LIST.size()));
     }
 
-    private void pickUp() {
+    private synchronized void pickUp() {
         Shelf shelf = Kitchen.getInstance().getShelfMap().get(getRandomShelf());
         Order order = getRandomOrder(shelf.getOrders());
         if(order != null) {

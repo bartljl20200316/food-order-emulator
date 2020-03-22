@@ -90,6 +90,6 @@ public class Order implements Comparable<Order> {
 
     @Override
     public int compareTo(Order o) {
-        return Float.compare(o.getValue(), this.getValue());
+        return Float.compare(this.getValue(), o.getValue());
     }
 }
