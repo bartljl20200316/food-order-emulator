@@ -42,6 +42,8 @@ public class Order implements Comparable<Order> {
 
     public Shelf getShelf() { return shelf; }
 
+    public long getOnShelfTime() { return onShelfTime; }
+
     public void setName(String name) {
         this.name = name;
     }

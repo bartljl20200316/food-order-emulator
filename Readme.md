@@ -26,7 +26,7 @@ For windows, run following command in two terminals to start zookeeper and kafka
 ## Build
 ```
 > cd food-order-emulator
-> mvn clean install
+> mvn clean package
 ```
 
 ## Run program
@@ -38,16 +38,15 @@ or
 ```
 > java -jar target/food-order-emulator-0.0.1-SNAPSHOT.jar
 ```
-
-## Run unit tests
-```
+## Run unit test
+```$xslt
 > mvn clean test
 ```
-Generate test coverage (Jacoco) report:
+
+The test coverage report will be in:
+```$xslt
+target/jacoco/index.html
 ```
-> mvn clean verify
-```
-The report will be in target/site/jacoco/index.html
 
 ## Order Moving Strategy
 1. Order is placed on their corresponding shelf according to their temp if the shelf is not full. 
@@ -57,10 +56,12 @@ The report will be in target/site/jacoco/index.html
 temp is same as upcoming order, put upcoming order on the same shelf. 
 5. Otherwise, move an order from overflow shelf to the shelf which discarded order at step 3.
 Then put the upcoming order to overflow shelf.
+6. Driver will pick up orders randomly.
 
-## Result
-When my program finished after a while, it will display a log at the end of the terminal, the sum of two numbers will be 
-equal to total number of orders.\
-"_**All the shelves are empty, total picked up orders is xxx, total wasted order is xxx**_"
+## How to test the program
+* Driven numbers can be configured in source folder application properties, "driver.number".
+* When my program finished running, it will display a log message at the end of the terminal.
+"_**All the shelves are empty, total picked up orders is xxx, total wasted order is xxx**_".
+The sum of two numbers will be equal to total number of orders.
 
 

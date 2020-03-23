@@ -1,4 +1,4 @@
-package com.cloud.kitchen.food.order.emulator;
+package com.cloud.kitchen.food.order.emulator.services.kafka;
 
 import com.cloud.kitchen.food.order.emulator.config.kafka.OrderConsumerConfig;
 import com.cloud.kitchen.food.order.emulator.config.kafka.OrderProducerConfig;
@@ -11,10 +11,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
+import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -25,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
+@SpringBootTest
 //@EmbeddedKafka
 public class KafkaServiceTest {
 
@@ -51,9 +54,7 @@ public class KafkaServiceTest {
 
     @Test
     public void testSendReceiveOrder() throws InterruptedException {
-        queue.add(order1);
-        queue.add(order2);
-        queue.forEach(order -> System.out.println(order.toString() + "  " + order.getValue()));
+
     }
 
 }
