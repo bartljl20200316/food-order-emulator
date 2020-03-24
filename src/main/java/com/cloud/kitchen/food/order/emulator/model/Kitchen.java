@@ -4,6 +4,7 @@ import com.cloud.kitchen.food.order.emulator.dto.TempEnum;
 import com.cloud.kitchen.food.order.emulator.dto.Order;
 import com.cloud.kitchen.food.order.emulator.utils.KitchenConsts;
 
+import com.cloud.kitchen.food.order.emulator.utils.KitchenNumber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,29 +15,29 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.cloud.kitchen.food.order.emulator.utils.KitchenConsts.SHELF_ARR;
+
 public class Kitchen {
 
     private static final Logger logger = LoggerFactory.getLogger(Kitchen.class);
 
     private static Kitchen instance;
     private Shelf overFlowShelf;
-
     private Map<String, Shelf> shelfMap;
-    public static final List<String> SHELF_TYPE_LIST = Arrays.asList(new String[] {"HOT", "COLD", "FROZEN", "OVERFLOW"});
 
-    private AtomicInteger totalRemoved = new AtomicInteger(0);
 
     private Kitchen() {
         shelfMap = new ConcurrentHashMap<>();
-        overFlowShelf = new Shelf(TempEnum.OVERFLOW.toString(), KitchenConsts.OVERFLOW_SHELF_CAPACITY);
 
-        for(String type: SHELF_TYPE_LIST) {
+        for(String type: SHELF_ARR) {
             if(type.equals(TempEnum.OVERFLOW.toString())) {
-                shelfMap.put(type, overFlowShelf);
+                shelfMap.put(type, new Shelf(TempEnum.OVERFLOW.toString(), KitchenConsts.OVERFLOW_SHELF_CAPACITY));
             }else {
                 shelfMap.put(type, new Shelf(type, KitchenConsts.NORMAL_SHELF_CAPACITY));
             }
         }
+
+        overFlowShelf = shelfMap.get(TempEnum.OVERFLOW.toString());
     }
 
     public static synchronized Kitchen getInstance() {
@@ -50,8 +51,6 @@ public class Kitchen {
         return shelfMap;
     }
 
-    public AtomicInteger getTotalRemoved() { return totalRemoved;}
-
     /**
      * Dispatch an order according to the following rule:
      *
@@ -64,7 +63,7 @@ public class Kitchen {
      *
      * @param order
      */
-    public synchronized void dispatch(Order order) {
+    public void dispatch(Order order) {
         TempEnum temp = order.getTemp();
         Shelf shelf = shelfMap.get(temp.toString());
 
@@ -82,7 +81,7 @@ public class Kitchen {
                     Shelf s = removed.getShelf();
                     logger.info("All shelves are full, remove an order {} whose value is {} from {} shelf",
                             removed, removed.getValue(), s.getType());
-                    logger.info("Total removed order is {}", totalRemoved.get());
+                    logger.info("Total removed order is {}", KitchenNumber.getWasteCount().get());
                     if(s.getType().equals(TempEnum.OVERFLOW.toString()) || s.getType().equals(temp.toString())) {
                         s.add(order);
                         return;
@@ -118,7 +117,7 @@ public class Kitchen {
         if(minOrder != null) {
             shelf = minOrder.getShelf();
             if(shelf.remove(minOrder)) {
-                totalRemoved.getAndIncrement();
+                KitchenNumber.getWasteCount().getAndIncrement();
                 return minOrder;
             }
         }
@@ -126,11 +125,23 @@ public class Kitchen {
         return minOrder;
     }
 
+    /**
+     *  Move order from one shelf to another shelf according to order type.
+     *
+     * @param from
+     *        From which shelf
+     * @param to
+     *        Destination shelf
+     * @param type
+     *        Order type
+     * @return
+     */
     private boolean moveOrder(Shelf from, Shelf to, String type) {
         for(Order order: from.getOrders() ) {
             if(type.equals(order.getTemp().toString()) && from.remove(order)) {
                 to.add(order);
                 if(from.getType().equals(TempEnum.OVERFLOW.toString())) {
+                    // TODO setOnShelfTime()
                     order.setDecayRate(order.getDecayRate() / 2);
                 }
 

@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+//@SpringBootTest
 //@EmbeddedKafka
 public class KafkaServiceTest {
 

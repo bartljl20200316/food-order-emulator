@@ -15,7 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+//@SpringBootTest
 public class ShelfTest {
 
     Order order;
@@ -23,7 +23,7 @@ public class ShelfTest {
     @Before
     public void setup() {
         order = new Order();
-        order.setName("Banana Split 1");
+        order.setName("Banana Split");
         order.setTemp(TempEnum.FROZEN);
         order.setShelfLife(20);
         order.setDecayRate(0.5f);
@@ -78,11 +78,18 @@ public class ShelfTest {
     }
 
     @Test
-    public void testRemoveOrderEmptyShelf() {
+    public void testRemoveNonExistingOrder() {
         Shelf shelf = new Shelf(TempEnum.FROZEN.toString(), KitchenConsts.NORMAL_SHELF_CAPACITY);
-        boolean result = shelf.remove(order);
+        shelf.add(order);
+
+        Order nonExist = new Order();
+        order.setName("Non exist order");
+        order.setTemp(TempEnum.FROZEN);
+        order.setShelfLife(20);
+        order.setDecayRate(0.5f);
+
+        boolean result = shelf.remove(nonExist);
 
         assertThat(result).isFalse();
-        assertThat(shelf.isEmpty()).isTrue();
     }
 }

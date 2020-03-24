@@ -3,10 +3,12 @@ package com.cloud.kitchen.food.order.emulator.execution;
 import com.cloud.kitchen.food.order.emulator.dto.Order;
 import com.cloud.kitchen.food.order.emulator.model.Kitchen;
 import com.cloud.kitchen.food.order.emulator.model.Shelf;
+import com.cloud.kitchen.food.order.emulator.utils.KitchenNumber;
+import com.cloud.kitchen.food.order.emulator.utils.KitchenUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Iterator;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,15 +17,13 @@ public class DriverThread implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(DriverThread.class);
 
-    AtomicInteger totalPicked = new AtomicInteger(0);
-
     @Override
     public void run() {
         int time = 0;
         synchronized (this) {
             if(Kitchen.getInstance().isAllShelvesEmpty()) {
                 logger.info("All the shelves are empty, total picked up orders is {}, total wasted order is {}",
-                        totalPicked, Kitchen.getInstance().getTotalRemoved().get() + ScheduledTasks.getTotalZero());
+                        KitchenNumber.getPickCount().get(), KitchenNumber.getWasteCount().get());
                 System.exit(0);
             }
 
@@ -41,41 +41,14 @@ public class DriverThread implements Runnable {
         pickUp();
     }
 
-    /**
-     *  Drive Pick up a random order
-     *
-     * @param orders
-     * @return
-     */
-    private Order getRandomOrder(PriorityBlockingQueue<Order> orders) {
-        if(orders.isEmpty()) {
-            return null;
-        }
-        int randomIndex = ThreadLocalRandom.current().nextInt(orders.size());
-        int i = 0;
-        Iterator<Order> it = orders.iterator();
-
-        while(it.hasNext()) {
-            if(randomIndex == i) {
-                return it.next();
-            }
-            i++;
-        }
-        return null;
-    }
-
-    private String getRandomShelf() {
-        return Kitchen.SHELF_TYPE_LIST.get(ThreadLocalRandom.current().nextInt(Kitchen.SHELF_TYPE_LIST.size()));
-    }
-
     private synchronized void pickUp() {
-        Shelf shelf = Kitchen.getInstance().getShelfMap().get(getRandomShelf());
-        Order order = getRandomOrder(shelf.getOrders());
+        Order order = KitchenUtils.getRandomOrder();
         if(order != null) {
+            Shelf shelf = order.getShelf();
             shelf.remove(order);
-            totalPicked.getAndIncrement();
+            KitchenNumber.getPickCount().getAndIncrement();
             logger.info("Driver {} picked up the order {}", Thread.currentThread().getId(), order);
-            logger.info("Total picked up order is {}", totalPicked);
+            logger.info("Total picked up order is {}", KitchenNumber.getPickCount().get());
         }
     }
 

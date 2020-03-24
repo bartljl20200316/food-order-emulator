@@ -26,7 +26,7 @@ For windows, run following command in two terminals to start zookeeper and kafka
 ## Build
 ```
 > cd food-order-emulator
-> mvn clean package
+> mvn clean install -DskipTests
 ```
 
 ## Run program
@@ -59,9 +59,16 @@ Then put the upcoming order to overflow shelf.
 6. Driver will pick up orders randomly.
 
 ## How to test the program
-* Driven numbers can be configured in source folder application properties, "driver.number".
+* Driver numbers can be configured in source folder application.properties, "driver.number". 
+It means how many drivers are picking up orders.
 * When my program finished running, it will display a log message at the end of the terminal.
 "_**All the shelves are empty, total picked up orders is xxx, total wasted order is xxx**_".
 The sum of two numbers will be equal to total number of orders.
+
+## Extra Credit
+The actual decay formula should be:
+```$xslt
+value = ([shelf life] - [order age]) - ([decay rate] * [order age])
+```
 
 
