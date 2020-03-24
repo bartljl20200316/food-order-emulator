@@ -25,7 +25,6 @@ public class Kitchen {
     private Shelf overFlowShelf;
     private Map<String, Shelf> shelfMap;
 
-
     private Kitchen() {
         shelfMap = new ConcurrentHashMap<>();
 
@@ -49,6 +48,14 @@ public class Kitchen {
 
     public Map<String, Shelf> getShelfMap() {
         return shelfMap;
+    }
+
+    public void setShelfMap(Map<String, Shelf> shelfMap) {
+        this.shelfMap = shelfMap;
+    }
+
+    public void setOverFlowShelf(Shelf overFlowShelf) {
+        this.overFlowShelf = overFlowShelf;
     }
 
     /**

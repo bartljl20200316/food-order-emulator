@@ -15,7 +15,7 @@ public class Order implements Comparable<Order> {
 
     public Order() {}
 
-    public float getValue() {
+    public synchronized float getValue() {
         float age = (System.currentTimeMillis() - onShelfTime) / 1000;
         return (shelfLife - age) - decayRate * age;
     }

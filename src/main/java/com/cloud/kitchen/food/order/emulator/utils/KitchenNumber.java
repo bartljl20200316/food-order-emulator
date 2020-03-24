@@ -4,8 +4,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class KitchenNumber {
 
-    private static volatile AtomicInteger pickCount = new AtomicInteger(0);
-    private static volatile AtomicInteger wasteCount = new AtomicInteger(0);
+    private static AtomicInteger pickCount = new AtomicInteger(0);
+    private static AtomicInteger wasteCount = new AtomicInteger(0);
 
     public static AtomicInteger getPickCount() {
         return pickCount;

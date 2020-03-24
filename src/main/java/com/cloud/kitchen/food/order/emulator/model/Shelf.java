@@ -2,7 +2,6 @@ package com.cloud.kitchen.food.order.emulator.model;
 
 import com.cloud.kitchen.food.order.emulator.dto.TempEnum;
 import com.cloud.kitchen.food.order.emulator.dto.Order;
-import com.cloud.kitchen.food.order.emulator.utils.KitchenConsts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,11 +63,7 @@ public class Shelf {
     }
 
     public boolean isFull() {
-        if(type.equals(TempEnum.OVERFLOW.toString())) {
-            return orders.size() == KitchenConsts.OVERFLOW_SHELF_CAPACITY;
-        }else {
-            return orders.size() == KitchenConsts.NORMAL_SHELF_CAPACITY;
-        }
+       return orders.size() == capacity;
     }
 
     public boolean isEmpty() {

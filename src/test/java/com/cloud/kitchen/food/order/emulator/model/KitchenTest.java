@@ -10,68 +10,46 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
 
 @RunWith(SpringRunner.class)
 //@SpringBootTest
 public class KitchenTest {
 
-    private Kitchen kitchen;
+    private Kitchen mockKitchen;
+    private Map<String, Shelf> originShelfMap;
+    private Shelf originOverflowShelf;
+
     List<Order> orders;
 
     @Before
     public void setup() throws IllegalArgumentException {
-        kitchen = mock(Kitchen.class);
-        setMock(kitchen);
+        mockKitchen = Kitchen.getInstance();
+        originShelfMap = mockKitchen.getShelfMap();
+        originOverflowShelf = originShelfMap.get(TempEnum.OVERFLOW.toString());
+
+        Map<String, Shelf> mockMap = new ConcurrentHashMap<>();
+        for(String type: KitchenConsts.SHELF_ARR) {// Set shelf capacity to 1
+            mockMap.put(type, new Shelf(type, 1));
+        }
+        mockKitchen.setShelfMap(mockMap);
+        mockKitchen.setOverFlowShelf(mockMap.get(TempEnum.OVERFLOW.toString()));
 
         initOrders();
     }
 
     @After
-    public void reset() throws NoSuchFieldException, IllegalAccessException {
-        Field instance = Kitchen.class.getDeclaredField("instance");
-        instance.setAccessible(true);
-        instance.set(instance, null);
-
-        /*Field overflow = Kitchen.class.getDeclaredField("overFlowShelf");
-        overflow.setAccessible(true);
-        overflow.set(overflow, null);*/
-
-        Field shelfMap = Kitchen.class.getDeclaredField("shelfMap");
-        shelfMap.setAccessible(true);
-        shelfMap.set(shelfMap, null);
+    public void reset() {
+        mockKitchen.setOverFlowShelf(originOverflowShelf);
+        mockKitchen.setShelfMap(originShelfMap);
+        mockKitchen = null;
 
         orders = new ArrayList<>();
-    }
-
-    private void setMock(Kitchen kitchen) throws IllegalArgumentException {
-        try {
-            Field instance = Kitchen.class.getDeclaredField("instance");
-            instance.setAccessible(true);
-            instance.set(instance, kitchen);
-
-           /* Field overflow = Kitchen.class.getDeclaredField("overFlowShelf");
-            overflow.setAccessible(true);
-            overflow.set(overflow, new Shelf(TempEnum.OVERFLOW.toString(), 1));*/
-
-            Field shelfMap = Kitchen.class.getDeclaredField("shelfMap");
-            shelfMap.setAccessible(true);
-            Map<String, Shelf> map = new ConcurrentHashMap<>();
-            for(String type: KitchenConsts.SHELF_ARR) {// Set shelf capacity to 1
-                map.put(type, new Shelf(type, 1));
-            }
-            shelfMap.set(shelfMap, map);
-
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e.getMessage());
-        }
     }
 
     private List<Order> initOrders() {
@@ -104,32 +82,70 @@ public class KitchenTest {
 
     @Test
     public void testDispatchOrder() {
-        orders.forEach(order -> kitchen.dispatch(order));
+        orders.forEach(order -> mockKitchen.dispatch(order));
 
         for(String type: KitchenConsts.SHELF_ARR) {
-            Shelf shelf = kitchen.getShelfMap().get(type);
+            Shelf shelf = mockKitchen.getShelfMap().get(type);
             if(shelf.getType().equals(TempEnum.OVERFLOW.toString())) {
                 assertThat(shelf.getOrders().size()).isEqualTo(0);
             }else {
                 assertThat(shelf.getOrders().size()).isEqualTo(1);
-                assertThat(shelf.getOrders().peek().getTemp()).isEqualTo(shelf.getType());
+                assertThat(shelf.getOrders().peek().getTemp().toString()).isEqualTo(shelf.getType());
             }
         }
     }
 
     @Test
-    public void testDispatchOrderOneShelfFull() {
+    public void testDispatchOrderWhenShelfFull() {
+        Order order = new Order();
+        order.setName("McFlury");
+        order.setTemp(TempEnum.FROZEN);
+        order.setShelfLife(375);
+        order.setDecayRate(0.4f);
 
+        orders.add(order);
+        orders.forEach(ord -> mockKitchen.dispatch(ord));
+
+        for(String type: KitchenConsts.SHELF_ARR) {
+            Shelf shelf = mockKitchen.getShelfMap().get(type);
+            if(shelf.getType().equals(TempEnum.OVERFLOW.toString())) {
+                assertThat(shelf.getOrders().size()).isEqualTo(1);
+                assertThat(shelf.getOrders().peek()).isEqualTo(order);
+            }else {
+                assertThat(shelf.getOrders().size()).isEqualTo(1);
+                assertThat(shelf.getOrders().peek().getTemp().toString()).isEqualTo(shelf.getType());
+            }
+        }
     }
 
     @Test
-    public void testMoveOrder() {
+    public void testRemoveMinOrderWhenAllShelvesFull() {
+        Order order = new Order();
+        order.setName("McFlury");
+        order.setTemp(TempEnum.FROZEN);
+        order.setShelfLife(375);
+        order.setDecayRate(0.4f);
 
-    }
+        Order nextOrder = new Order();
+        nextOrder.setName("Coke");
+        nextOrder.setTemp(TempEnum.COLD);
+        nextOrder.setShelfLife(240);
+        nextOrder.setDecayRate(0.25f);
 
-    @Test
-    public void testRemoveOrderWhenAllShelvesFull() {
+        orders.add(order);
+        orders.add(nextOrder);
+        orders.forEach(ord -> mockKitchen.dispatch(ord));
 
+        for(String type: KitchenConsts.SHELF_ARR) {
+            Shelf shelf = mockKitchen.getShelfMap().get(type);
+            if(shelf.getType().equals(TempEnum.OVERFLOW.toString())) {
+                assertThat(shelf.getOrders().size()).isEqualTo(1);
+                assertThat(shelf.getOrders().peek()).isEqualTo(nextOrder);
+            }else {
+                assertThat(shelf.getOrders().size()).isEqualTo(1);
+                assertThat(shelf.getOrders().peek().getTemp().toString()).isEqualTo(shelf.getType());
+            }
+        }
     }
 
 }
