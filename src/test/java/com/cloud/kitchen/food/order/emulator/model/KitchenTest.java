@@ -29,12 +29,13 @@ public class KitchenTest {
 
     @Before
     public void setup() throws IllegalArgumentException {
-        mockKitchen = Kitchen.getInstance();
-        originShelfMap = mockKitchen.getShelfMap();
+        originShelfMap = Kitchen.getInstance().getShelfMap();
         originOverflowShelf = originShelfMap.get(TempEnum.OVERFLOW.toString());
 
+        mockKitchen = Kitchen.getInstance();
+
         Map<String, Shelf> mockMap = new ConcurrentHashMap<>();
-        for(String type: KitchenConsts.SHELF_ARR) {// Set shelf capacity to 1
+        for(String type: KitchenConsts.SHELF_LIST) {// Set shelf capacity to 1
             mockMap.put(type, new Shelf(type, 1));
         }
         mockKitchen.setShelfMap(mockMap);
@@ -84,7 +85,7 @@ public class KitchenTest {
     public void testDispatchOrder() {
         orders.forEach(order -> mockKitchen.dispatch(order));
 
-        for(String type: KitchenConsts.SHELF_ARR) {
+        for(String type: KitchenConsts.SHELF_LIST) {
             Shelf shelf = mockKitchen.getShelfMap().get(type);
             if(shelf.getType().equals(TempEnum.OVERFLOW.toString())) {
                 assertThat(shelf.getOrders().size()).isEqualTo(0);
@@ -106,7 +107,7 @@ public class KitchenTest {
         orders.add(order);
         orders.forEach(ord -> mockKitchen.dispatch(ord));
 
-        for(String type: KitchenConsts.SHELF_ARR) {
+        for(String type: KitchenConsts.SHELF_LIST) {
             Shelf shelf = mockKitchen.getShelfMap().get(type);
             if(shelf.getType().equals(TempEnum.OVERFLOW.toString())) {
                 assertThat(shelf.getOrders().size()).isEqualTo(1);
@@ -136,7 +137,7 @@ public class KitchenTest {
         orders.add(nextOrder);
         orders.forEach(ord -> mockKitchen.dispatch(ord));
 
-        for(String type: KitchenConsts.SHELF_ARR) {
+        for(String type: KitchenConsts.SHELF_LIST) {
             Shelf shelf = mockKitchen.getShelfMap().get(type);
             if(shelf.getType().equals(TempEnum.OVERFLOW.toString())) {
                 assertThat(shelf.getOrders().size()).isEqualTo(1);
@@ -146,6 +147,9 @@ public class KitchenTest {
                 assertThat(shelf.getOrders().peek().getTemp().toString()).isEqualTo(shelf.getType());
             }
         }
+
+        // TODO Verify removed order
+
     }
 
 }

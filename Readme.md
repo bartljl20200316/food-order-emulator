@@ -50,25 +50,27 @@ target/jacoco/index.html
 
 ## Order Moving Strategy
 1. Order is placed on their corresponding shelf according to their temp if the shelf is not full. 
-2. If any of the shelf (hot, cold, frozen) is full, when an order comes, it will be put on overflow shelf.
+2. If any of the shelf (hot, cold, frozen) is full, when a new order comes, it will be put on overflow shelf.
 3. If all the shelves including overflow shelf are full, remove an order which has smallest value among all shelves.
-4. If the discarded order above is from overflow shelf, then put the upcoming order in overflow shelf. If the discarded order's 
+4. If the discarded order above is from overflow shelf, then put the new order in overflow shelf. If the discarded order's 
 temp is same as upcoming order, put upcoming order on the same shelf. 
 5. Otherwise, move an order from overflow shelf to the shelf which discarded order at step 3.
-Then put the upcoming order to overflow shelf.
+Then put the new order to overflow shelf.
 6. Driver will pick up orders randomly.
 
 ## How to test the program
 * Driver numbers can be configured in source folder application.properties, "driver.number". 
-It means how many drivers are picking up orders.
-* When my program finished running, it will display a log message at the end of the terminal.
-"_**All the shelves are empty, total picked up orders is xxx, total wasted order is xxx**_".
-The sum of two numbers will be equal to total number of orders.
+It will decide how many drivers are picking up orders.
+* When program finished running, it will display a log message at the end of the terminal.
+"_**All the shelves are empty, total orders is 132, picked up orders is xxx, total wasted order is xxx**_".
+The sum of pickup numbers and wasted numbers will be equal to total number of orders.
 
 ## Extra Credit
 The actual decay formula should be:
 ```$xslt
-value = ([shelf life] - [order age]) - ([decay rate] * [order age])
+value = ([value_off_overflow_shelf] - [order age]) - ([decay rate] * [order age])
 ```
+value_off_overflow_shelf is value of order when move off from overflow shelf. If the order is never on
+overflow shelf, it should be same as its shelf life.
 
 

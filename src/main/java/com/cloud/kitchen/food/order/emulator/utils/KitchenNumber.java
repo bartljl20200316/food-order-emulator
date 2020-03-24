@@ -4,6 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class KitchenNumber {
 
+    private static AtomicInteger orderCount = new AtomicInteger(0);
     private static AtomicInteger pickCount = new AtomicInteger(0);
     private static AtomicInteger wasteCount = new AtomicInteger(0);
 
@@ -13,4 +14,5 @@ public class KitchenNumber {
 
     public static AtomicInteger getWasteCount() { return wasteCount; }
 
+    public static AtomicInteger getOrderCount() { return orderCount; }
 }

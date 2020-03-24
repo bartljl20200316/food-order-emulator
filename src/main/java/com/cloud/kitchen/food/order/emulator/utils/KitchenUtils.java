@@ -4,6 +4,7 @@ import com.cloud.kitchen.food.order.emulator.dto.Order;
 import com.cloud.kitchen.food.order.emulator.model.Kitchen;
 import com.cloud.kitchen.food.order.emulator.model.Shelf;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -17,16 +18,18 @@ public class KitchenUtils {
      * @return
      */
     public static synchronized Order getRandomOrder() {
-
-        List<String> shelfList = Arrays.asList(KitchenConsts.SHELF_ARR);
-        Shelf randomShelf;
-        // Generate a random shelf
-        String shelfName = shelfList.get(ThreadLocalRandom.current().nextInt(4));
-        randomShelf = Kitchen.getInstance().getShelfMap().get(shelfName);
-
-        if(randomShelf.isEmpty()) {
+        // Generate a random shelf which has orders on it
+        List<String> shelfList = new ArrayList<>();
+        for(String s : KitchenConsts.SHELF_LIST) {
+            if(!Kitchen.getInstance().getShelfMap().get(s).isEmpty()) {
+                shelfList.add(s);
+            }
+        }
+        if(shelfList.isEmpty()) {
             return null;
         }
+        String shelfName = shelfList.get(ThreadLocalRandom.current().nextInt(shelfList.size()));
+        Shelf randomShelf = Kitchen.getInstance().getShelfMap().get(shelfName);
 
         // Generate a random order
         int randomIndex = ThreadLocalRandom.current().nextInt(randomShelf.getOrders().size());

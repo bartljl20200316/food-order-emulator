@@ -50,24 +50,23 @@ public class OrderStreamingRunner implements CommandLineRunner {
             JsonReader jsonReader = new JsonReader(new InputStreamReader(resource.getInputStream()));
             Gson gson = new GsonBuilder().create();
 
+            ScheduledExecutorService executorService = Executors.newScheduledThreadPool(driverNum);
+            //Runnable task = new DriverThread(executorService);
+            for(int i = 0; i < driverNum; i++) {
+                executorService.scheduleWithFixedDelay(new DriverThread(), 5, 1, TimeUnit.SECONDS);
+            }
+
             logger.info("Start streaming orders...");
             jsonReader.beginArray();
-            int totalOrders = 0;
+
             while (jsonReader.hasNext()){
                 Order order = gson.fromJson(jsonReader, Order.class);
-                totalOrders++;
                 orderProducer.send(order);
+
+                Thread.sleep(300);
             }
 
             jsonReader.endArray();
-
-            logger.info("Total order number is {}", totalOrders);
-
-            ScheduledExecutorService executorService = Executors.newScheduledThreadPool(driverNum);
-            Runnable task = new DriverThread();
-            for(int i = 0; i < driverNum; i++) {
-                executorService.scheduleWithFixedDelay(task, 5, 1, TimeUnit.SECONDS);
-            }
 
         } catch (Exception e) {
            logger.error(e.getMessage());

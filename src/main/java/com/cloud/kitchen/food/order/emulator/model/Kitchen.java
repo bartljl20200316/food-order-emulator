@@ -8,14 +8,9 @@ import com.cloud.kitchen.food.order.emulator.utils.KitchenNumber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.cloud.kitchen.food.order.emulator.utils.KitchenConsts.SHELF_ARR;
 
 public class Kitchen {
 
@@ -28,7 +23,7 @@ public class Kitchen {
     private Kitchen() {
         shelfMap = new ConcurrentHashMap<>();
 
-        for(String type: SHELF_ARR) {
+        for(String type: KitchenConsts.SHELF_LIST) {
             if(type.equals(TempEnum.OVERFLOW.toString())) {
                 shelfMap.put(type, new Shelf(TempEnum.OVERFLOW.toString(), KitchenConsts.OVERFLOW_SHELF_CAPACITY));
             }else {
@@ -146,11 +141,12 @@ public class Kitchen {
     private boolean moveOrder(Shelf from, Shelf to, String type) {
         for(Order order: from.getOrders() ) {
             if(type.equals(order.getTemp().toString()) && from.remove(order)) {
-                to.add(order);
                 if(from.getType().equals(TempEnum.OVERFLOW.toString())) {
-                    // TODO setOnShelfTime()
                     order.setDecayRate(order.getDecayRate() / 2);
+                    // New shelf life should be the value of order
+                    order.setShelfLife((int)order.getValue());
                 }
+                to.add(order);
 
                 logger.info("Move an order {} from {} Shelf to {} Shelf", order, from.getType(), to.getType());
                 return true;
