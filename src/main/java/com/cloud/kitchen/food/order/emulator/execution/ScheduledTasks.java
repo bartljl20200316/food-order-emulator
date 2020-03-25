@@ -34,7 +34,7 @@ public class ScheduledTasks {
      */
     @Scheduled(fixedRate = 5000, initialDelay = 5000)
     public void printKitchenStatus() {
-        logger.info("Total received order is {}, picked up order is {}, total wasted order is {}",
+        logger.info("Total received order is {}, picked up order is {}, wasted order is {}",
                 KitchenNumber.getOrderCount().get(),
                 KitchenNumber.getPickCount().get(),
                 KitchenNumber.getWasteCount().get());

@@ -65,7 +65,7 @@ public class Kitchen {
      *
      * @param order
      */
-    public void dispatch(Order order) {
+    public synchronized void dispatch(Order order) {
         TempEnum temp = order.getTemp();
         Shelf shelf = shelfMap.get(temp.toString());
 
