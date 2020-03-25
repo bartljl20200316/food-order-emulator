@@ -31,29 +31,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 //@EmbeddedKafka
 public class KafkaServiceTest {
 
-    PriorityBlockingQueue<Order> queue = new PriorityBlockingQueue<>();
-    Order order1, order2;
-
     @Before
     public void Setup() {
-        order1 = new Order();
-        order2 = new Order();
 
-        order1.setName("Banana Split 1");
-        order1.setTemp(TempEnum.FROZEN);
-        order1.setShelfLife(20);
-        order1.setDecayRate(0.63f);
-        order1.setOnShelfTime(System.currentTimeMillis());
-
-        order2.setName("Banana Split 2");
-        order2.setTemp(TempEnum.FROZEN);
-        order2.setShelfLife(20);
-        order2.setDecayRate(0.63f);
-        order2.setOnShelfTime(System.currentTimeMillis() - 2000L);
     }
 
     @Test
-    public void testSendReceiveOrder() throws InterruptedException {
+    public void testKafkaSendReceiveOrder() throws InterruptedException {
 
     }
 

@@ -2,7 +2,6 @@ package com.cloud.kitchen.food.order.emulator.model;
 
 import com.cloud.kitchen.food.order.emulator.dto.Order;
 import com.cloud.kitchen.food.order.emulator.dto.TempEnum;
-import com.cloud.kitchen.food.order.emulator.utils.KitchenConsts;
 
 import org.junit.After;
 import org.junit.Before;
@@ -30,7 +29,7 @@ public class ShelfTest {
     }
 
     @After
-    public void tearDown() {
+    public void reset() {
         resetOrder();
     }
 
@@ -42,7 +41,7 @@ public class ShelfTest {
 
     @Test
     public void testAddOrder() {
-        Shelf shelf = new Shelf(TempEnum.FROZEN.toString(), KitchenConsts.NORMAL_SHELF_CAPACITY);
+        Shelf shelf = new Shelf(TempEnum.FROZEN.toString(), 1);
         shelf.add(order);
 
         assertThat(order.getOnShelfTime()).isGreaterThan(0);
@@ -53,7 +52,7 @@ public class ShelfTest {
 
     @Test
     public void testAddOrderToOverFlowShelf() {
-        Shelf shelf = new Shelf(TempEnum.OVERFLOW.toString(), KitchenConsts.OVERFLOW_SHELF_CAPACITY);
+        Shelf shelf = new Shelf(TempEnum.OVERFLOW.toString(), 1);
         float decayRate = 0.5f;
 
         order.setDecayRate(decayRate);
@@ -68,7 +67,7 @@ public class ShelfTest {
 
     @Test
     public void testRemoveOrder() {
-        Shelf shelf = new Shelf(TempEnum.FROZEN.toString(), KitchenConsts.NORMAL_SHELF_CAPACITY);
+        Shelf shelf = new Shelf(TempEnum.FROZEN.toString(), 1);
         shelf.add(order);
 
         boolean result = shelf.remove(order);
@@ -79,7 +78,7 @@ public class ShelfTest {
 
     @Test
     public void testRemoveNonExistingOrder() {
-        Shelf shelf = new Shelf(TempEnum.FROZEN.toString(), KitchenConsts.NORMAL_SHELF_CAPACITY);
+        Shelf shelf = new Shelf(TempEnum.FROZEN.toString(), 1);
         shelf.add(order);
 
         Order nonExist = new Order();
@@ -91,5 +90,31 @@ public class ShelfTest {
         boolean result = shelf.remove(nonExist);
 
         assertThat(result).isFalse();
+    }
+
+    @Test
+    public void testOrderQueueSequenceAfterAdd() {
+        Shelf shelf = new Shelf(TempEnum.FROZEN.toString(), 2);
+
+        Order order1, order2;
+        order1 = new Order();
+        order2 = new Order();
+
+        order1.setName("Sherbet");
+        order1.setTemp(TempEnum.FROZEN);
+        order1.setShelfLife(175);
+        order1.setDecayRate(0.6f);
+
+        order2.setName("Ice");
+        order2.setTemp(TempEnum.FROZEN);
+        order2.setShelfLife(100);
+        order2.setDecayRate(0.9f);
+
+        shelf.add(order1);
+        shelf.add(order2);
+
+        assertThat(shelf.getMinValueOrder()).isEqualTo(order2);
+        shelf.remove(order2);
+        assertThat(shelf.getMinValueOrder()).isEqualTo(order1);
     }
 }

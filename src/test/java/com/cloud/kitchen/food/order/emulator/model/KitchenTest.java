@@ -3,6 +3,7 @@ package com.cloud.kitchen.food.order.emulator.model;
 import com.cloud.kitchen.food.order.emulator.dto.Order;
 import com.cloud.kitchen.food.order.emulator.dto.TempEnum;
 import com.cloud.kitchen.food.order.emulator.utils.KitchenConsts;
+import com.cloud.kitchen.food.order.emulator.utils.KitchenMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +14,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,17 +29,9 @@ public class KitchenTest {
 
     @Before
     public void setup() throws IllegalArgumentException {
-        originShelfMap = Kitchen.getInstance().getShelfMap();
-        originOverflowShelf = originShelfMap.get(TempEnum.OVERFLOW.toString());
-
-        mockKitchen = Kitchen.getInstance();
-
-        Map<String, Shelf> mockMap = new ConcurrentHashMap<>();
-        for(String type: KitchenConsts.SHELF_LIST) {// Set shelf capacity to 1
-            mockMap.put(type, new Shelf(type, 1));
-        }
-        mockKitchen.setShelfMap(mockMap);
-        mockKitchen.setOverFlowShelf(mockMap.get(TempEnum.OVERFLOW.toString()));
+        mockKitchen = KitchenMock.initKitchen();
+        originShelfMap = KitchenMock.getOriginShelfMap();
+        originOverflowShelf = KitchenMock.getOriginOverflowShelf();
 
         initOrders();
     }
@@ -49,7 +41,6 @@ public class KitchenTest {
         mockKitchen.setOverFlowShelf(originOverflowShelf);
         mockKitchen.setShelfMap(originShelfMap);
         mockKitchen = null;
-
         orders = new ArrayList<>();
     }
 
@@ -145,11 +136,11 @@ public class KitchenTest {
             }else {
                 assertThat(shelf.getOrders().size()).isEqualTo(1);
                 assertThat(shelf.getOrders().peek().getTemp().toString()).isEqualTo(shelf.getType());
+                if(shelf.getType().equals(TempEnum.FROZEN.toString())) {
+                    assertThat(shelf.getOrders().peek()).isEqualTo(order);
+                }
             }
         }
-
-        // TODO Verify removed order
-
     }
 
 }

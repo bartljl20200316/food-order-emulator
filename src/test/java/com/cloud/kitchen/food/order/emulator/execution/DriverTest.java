@@ -4,7 +4,7 @@ import com.cloud.kitchen.food.order.emulator.dto.Order;
 import com.cloud.kitchen.food.order.emulator.dto.TempEnum;
 import com.cloud.kitchen.food.order.emulator.model.Kitchen;
 import com.cloud.kitchen.food.order.emulator.model.Shelf;
-import com.cloud.kitchen.food.order.emulator.utils.KitchenConsts;
+import com.cloud.kitchen.food.order.emulator.utils.KitchenMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,8 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 public class DriverTest {
@@ -31,25 +31,17 @@ public class DriverTest {
 
     @Before
     public void setup() throws IllegalArgumentException {
-        originShelfMap = Kitchen.getInstance().getShelfMap();
-        originOverflowShelf = originShelfMap.get(TempEnum.OVERFLOW.toString());
-
-        mockKitchen = Kitchen.getInstance();
-
-        Map<String, Shelf> mockMap = new ConcurrentHashMap<>();
-        for(String type: KitchenConsts.SHELF_LIST) {// Set shelf capacity to 1
-            mockMap.put(type, new Shelf(type, 1));
-        }
-        mockKitchen.setShelfMap(mockMap);
-        mockKitchen.setOverFlowShelf(mockMap.get(TempEnum.OVERFLOW.toString()));
+        mockKitchen = KitchenMock.initKitchen();
+        originShelfMap = KitchenMock.getOriginShelfMap();
+        originOverflowShelf = KitchenMock.getOriginOverflowShelf();
 
         initOrders();
     }
 
     @After
     public void reset() {
-        mockKitchen.setOverFlowShelf(originOverflowShelf);
         mockKitchen.setShelfMap(originShelfMap);
+        mockKitchen.setOverFlowShelf(originOverflowShelf);
         mockKitchen = null;
 
         orders = new ArrayList<>();
@@ -77,9 +69,7 @@ public class DriverTest {
         for(int i = 0; i < orders.size() + 1; i++) {
             executor.submit(new DriverThread());
         }
-        await().atMost(Duration.ofSeconds(12 * 1000L)).until(() -> mockKitchen.isAllShelvesEmpty());
+        await().atMost(Duration.ofSeconds(11)).untilAsserted(() -> assertThat(mockKitchen.isAllShelvesEmpty()).isTrue());
         executor.shutdown();
-
-        assertThat(mockKitchen.isAllShelvesEmpty()).isTrue();
     }
 }

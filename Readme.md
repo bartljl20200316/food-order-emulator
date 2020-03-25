@@ -61,16 +61,16 @@ Then put the new order to overflow shelf.
 ## How to test the program
 * Driver numbers can be configured in source folder application.properties, "driver.number". 
 It will decide how many drivers are picking up orders.
-* When program finished running, it will display a log message at the end of the terminal.
-"_**All the shelves are empty, total orders is 132, picked up orders is xxx, total wasted order is xxx**_".
-The sum of pickup numbers and wasted numbers will be equal to total number of orders.
+* Program will display a log message every 5 seconds about the order numbers.
+"_**Total received order is xxx, picked up order is xxx, total wasted order is xxx**_".
+The sum of pickup numbers and wasted numbers will be equal to total received number of orders.
 
 ## Extra Credit
 The actual decay formula should be:
 ```$xslt
 value = ([value_off_overflow_shelf] - [order age]) - ([decay rate] * [order age])
 ```
-value_off_overflow_shelf is value of order when move off from overflow shelf. If the order is never on
+value_off_overflow_shelf is value of order when move off from overflow shelf. If the order is never on/off
 overflow shelf, it should be same as its shelf life.
 
 

@@ -13,30 +13,31 @@ import java.util.concurrent.ThreadLocalRandom;
 public class DriverThread implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(DriverThread.class);
+    private Object waitObj = new Object();
 
     @Override
     public void run() {
-        if (Kitchen.getInstance().isAllShelvesEmpty()) {
-            logger.info("All the shelves are empty, total orders is {}, picked up orders is {}, total wasted order is {}",
-                    KitchenNumber.getOrderCount().get(),
-                    KitchenNumber.getPickCount().get(),
-                    KitchenNumber.getWasteCount().get());
-
-            logger.info("Driver {} is waiting for new orders...", Thread.currentThread().getId());
-        } else {
-            int time = ThreadLocalRandom.current().nextInt(2, 11);
-            logger.info("Driver {} needs {} seconds to arrive to pick up order", Thread.currentThread().getId(), time);
-
-            try {
-                Thread.sleep(time * 1000L);
-            } catch (InterruptedException e) {
-                logger.error(e.getMessage());
-                Thread.currentThread().interrupt();
+        synchronized (waitObj) {
+            while (Kitchen.getInstance().isAllShelvesEmpty()) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    logger.error(e.getMessage());
+                    Thread.currentThread().interrupt();
+                }
             }
-
-            pickUp();
         }
 
+        int time = ThreadLocalRandom.current().nextInt(2, 11);
+        logger.info("Driver {} needs {} seconds to arrive to pick up order", Thread.currentThread().getId(), time);
+        try {
+            Thread.sleep(time * 1000L);
+        } catch (InterruptedException e) {
+            logger.error(e.getMessage());
+            Thread.currentThread().interrupt();
+        }
+
+        pickUp();
     }
 
     private synchronized void pickUp() {

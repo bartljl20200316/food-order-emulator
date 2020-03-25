@@ -29,6 +29,17 @@ public class ScheduledTasks {
         }
     }
 
+    /**
+     * Print order number details.
+     */
+    @Scheduled(fixedRate = 5000, initialDelay = 5000)
+    public void printKitchenStatus() {
+        logger.info("Total received order is {}, picked up order is {}, total wasted order is {}",
+                KitchenNumber.getOrderCount().get(),
+                KitchenNumber.getPickCount().get(),
+                KitchenNumber.getWasteCount().get());
+    }
+
     private void checkZeroValue(PriorityBlockingQueue<Order> orders) {
         Iterator<Order> it = orders.iterator();
         while(it.hasNext()) {
