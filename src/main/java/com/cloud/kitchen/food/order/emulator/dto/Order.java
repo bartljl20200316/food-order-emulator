@@ -90,6 +90,11 @@ public class Order implements Comparable<Order> {
         return Objects.hash(name, temp, shelfLife, decayRate);
     }
 
+    /**
+     * Ascending order based on value
+     * @param o
+     * @return
+     */
     @Override
     public int compareTo(Order o) {
         return Float.compare(this.getValue(), o.getValue());

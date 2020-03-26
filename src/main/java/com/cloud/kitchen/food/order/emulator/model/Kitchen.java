@@ -90,9 +90,8 @@ public class Kitchen {
                     }
                 }
             }
-            for (String t : shelfMap.keySet()) {
-                Shelf s = shelfMap.get(t);
-                if (!s.isFull() && moveOrder(overFlowShelf, s, t)) {
+            for (Shelf s : shelfMap.values()) {
+                if (!s.isFull() && moveOrder(s)) {
                     overFlowShelf.add(order);
                     return;
                 }
@@ -128,27 +127,21 @@ public class Kitchen {
     }
 
     /**
-     *  Move order from one shelf to another shelf according to order type.
+     *  Move order from overshelf to another shelf according to order type.
      *
-     * @param from
-     *        From which shelf
      * @param to
      *        Destination shelf
-     * @param type
-     *        Order type
      * @return
      */
-    private boolean moveOrder(Shelf from, Shelf to, String type) {
-        for(Order order: from.getOrders() ) {
-            if(type.equals(order.getTemp().toString()) && from.remove(order)) {
-                if(from.getType().equals(TempEnum.OVERFLOW.toString())) {
-                    order.setDecayRate(order.getDecayRate() / 2);
-                    // New shelf life should be the value of order
-                    order.setShelfLife((int)order.getValue());
-                }
+    private boolean moveOrder(Shelf to) {
+        for(Order order: overFlowShelf.getOrders() ) {
+            if(to.getType().equals(order.getTemp().toString()) && overFlowShelf.remove(order)) {
+                order.setDecayRate(order.getDecayRate() / 2);
+                // New shelf life should be the value of order
+                order.setShelfLife((int) order.getValue());
                 to.add(order);
 
-                logger.info("Move an order {} from {} Shelf to {} Shelf", order, from.getType(), to.getType());
+                logger.info("Move an order {} from overflow Shelf to {} Shelf", order, to.getType());
                 return true;
             }
         }

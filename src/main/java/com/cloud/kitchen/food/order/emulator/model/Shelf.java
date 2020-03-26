@@ -35,7 +35,7 @@ public class Shelf {
         return orders;
     }
 
-    public void add(Order order) {
+    public synchronized void add(Order order) {
         if(type.equals(TempEnum.OVERFLOW.toString())) {
             order.setDecayRate(order.getDecayRate() * 2);
         }
@@ -48,7 +48,7 @@ public class Shelf {
         display();
     }
 
-    public boolean remove(Order order) {
+    public synchronized boolean remove(Order order) {
         if(orders.remove(order)) {
             logger.info("Remove an order {} from {} shelf", order, type);
             display();

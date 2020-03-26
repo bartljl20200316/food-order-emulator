@@ -64,7 +64,7 @@ It will decide how many drivers are picking up orders.
 * Program will display a log message every 5 seconds about the order numbers.
 "_**Total received order is xxx, picked up order is xxx, total wasted order is xxx**_".
 The sum of pickup numbers and wasted numbers will be equal to total received number of orders.
-* The program will not terminate itself and will wait for new orders coming.
+* The program takes around 2 minutes to finish but not terminate itself and will wait for new orders coming.
 
 ## Extra Credit
 The accurate decay formula should be unique per order and depends on its age on overflow shelf.
