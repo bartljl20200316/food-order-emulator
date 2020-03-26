@@ -6,7 +6,7 @@ A system that emulates the fulfillment of food orders in kitchen
 Jialong Li
 
 ## Prerequisites
-* JDK 1.8
+* JDK 1.8 (with lambda feature)
 * Maven
 * Kafka
 
@@ -64,13 +64,12 @@ It will decide how many drivers are picking up orders.
 * Program will display a log message every 5 seconds about the order numbers.
 "_**Total received order is xxx, picked up order is xxx, total wasted order is xxx**_".
 The sum of pickup numbers and wasted numbers will be equal to total received number of orders.
+* The program will not terminate itself and will wait for new orders coming.
 
 ## Extra Credit
-The actual decay formula should be:
+The accurate decay formula should be unique per order and depends on its age on overflow shelf.
 ```$xslt
-value = ([value_off_overflow_shelf] - [order age]) - ([decay rate] * [order age])
+value = ([shelf life] - [order age]) - ([decay rate] * ([order age] + [order age on overflow]))
 ```
-value_off_overflow_shelf is value of order when move off from overflow shelf. If the order is never on/off
-overflow shelf, it should be same as its shelf life.
 
 
