@@ -62,6 +62,7 @@ public class Kitchen {
      * 4. If the discarded order above is from overflow shelf, then put the upcoming order in overflow shelf.
      * If the discarded order'stemp is same as upcoming order, put upcoming order on the same shelf.
      * 5. Otherwise, move an order from overflow shelf to the shelf which discarded order at step 3.Then put the upcoming order to overflow shelf.
+     * 6. If can't move order in step 5, move an min value order from same type shelf and add new order.
      *
      * @param order
      */
@@ -96,6 +97,9 @@ public class Kitchen {
                     return;
                 }
             }
+            // If can't move order in step 5, move an min value order from same type shelf and add new order.
+            shelf.remove(shelf.getMinValueOrder());
+            shelf.add(order);
         }
     }
 
@@ -127,7 +131,7 @@ public class Kitchen {
     }
 
     /**
-     *  Move order from overshelf to another shelf according to order type.
+     *  Move order from overflow shelf to another shelf according to order type.
      *
      * @param to
      *        Destination shelf

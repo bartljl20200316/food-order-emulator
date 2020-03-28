@@ -8,13 +8,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-//@SpringBootTest
 public class ShelfTest {
 
     Order order;
@@ -82,18 +80,38 @@ public class ShelfTest {
         shelf.add(order);
 
         Order nonExist = new Order();
-        order.setName("Non exist order");
-        order.setTemp(TempEnum.FROZEN);
-        order.setShelfLife(20);
-        order.setDecayRate(0.5f);
 
-        boolean result = shelf.remove(nonExist);
+        nonExist.setName("Banana Split Mock");
+        nonExist.setTemp(TempEnum.FROZEN);
+        nonExist.setShelfLife(20);
+        nonExist.setDecayRate(0.5f);
 
-        assertThat(result).isFalse();
+        assertThat(shelf.remove(nonExist)).isFalse();
+
+        nonExist.setName("Banana Split");
+        nonExist.setTemp(TempEnum.HOT);
+        nonExist.setShelfLife(20);
+        nonExist.setDecayRate(0.5f);
+
+        assertThat(shelf.remove(nonExist)).isFalse();
+
+        nonExist.setName("Banana Split");
+        nonExist.setTemp(TempEnum.FROZEN);
+        nonExist.setShelfLife(200);
+        nonExist.setDecayRate(0.5f);
+
+        assertThat(shelf.remove(nonExist)).isFalse();
+
+        nonExist.setName("Banana Split");
+        nonExist.setTemp(TempEnum.FROZEN);
+        nonExist.setShelfLife(20);
+        nonExist.setDecayRate(1.0f);
+
+        assertThat(shelf.remove(nonExist)).isFalse();
     }
 
     @Test
-    public void testOrderQueueSequenceAfterAdd() {
+    public void testOrderQueueSequence_AfterAddOrder() {
         Shelf shelf = new Shelf(TempEnum.FROZEN.toString(), 2);
 
         Order order1, order2;

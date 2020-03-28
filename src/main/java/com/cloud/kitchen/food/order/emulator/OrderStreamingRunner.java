@@ -51,7 +51,6 @@ public class OrderStreamingRunner implements CommandLineRunner {
             Gson gson = new GsonBuilder().create();
 
             ScheduledExecutorService executorService = Executors.newScheduledThreadPool(driverNum);
-            //Runnable task = new DriverThread(executorService);
             for(int i = 0; i < driverNum; i++) {
                 executorService.scheduleWithFixedDelay(new DriverThread(), 5, 1, TimeUnit.SECONDS);
             }

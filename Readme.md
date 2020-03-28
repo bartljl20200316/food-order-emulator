@@ -39,6 +39,7 @@ or
 > java -jar target/food-order-emulator-0.0.1-SNAPSHOT.jar
 ```
 ## Run unit test
+Also need to start kafka server since there is an integration test which will use real kafka server.
 ```$xslt
 > mvn clean test
 ```
@@ -47,6 +48,7 @@ The test coverage report will be in:
 ```$xslt
 target/jacoco/index.html
 ```
+![Jacoco Report](Jacoco.png)
 
 ## Order Moving Strategy
 1. Order is placed on their corresponding shelf according to their temp if the shelf is not full. 
@@ -56,11 +58,11 @@ target/jacoco/index.html
 temp is same as upcoming order, put upcoming order on the same shelf. 
 5. Otherwise, move an order from overflow shelf to the shelf which discarded order at step 3.
 Then put the new order to overflow shelf.
-6. Driver will pick up orders randomly.
+6. If can't move order in step 5, move an min value order from same type shelf and add new order.
 
 ## How to test the program
 * Driver numbers can be configured in source folder application.properties, "driver.number". 
-It will decide how many drivers are picking up orders.
+It will decide how many drivers are picking up orders. Driver will pick up orders randomly.
 * Program will display a log message every 5 seconds about the order numbers.
 "_**Total received order is xxx, picked up order is xxx, total wasted order is xxx**_".
 The sum of pickup numbers and wasted numbers will be equal to total received number of orders.

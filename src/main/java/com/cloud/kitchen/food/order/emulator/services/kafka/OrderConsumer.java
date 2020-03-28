@@ -16,16 +16,6 @@ public class OrderConsumer {
 
     private static final Logger logger = LoggerFactory.getLogger(OrderConsumer.class);
 
-    private CountDownLatch latch;
-
-    public CountDownLatch getLatch() {
-        return latch;
-    }
-
-    public void setLatch(CountDownLatch latch) {
-        this.latch = latch;
-    }
-
     @KafkaListener(topics = "${kafka.topic.json}")
     public void receive(List<Order> orders) {
         logger.info("received order='{}'", orders);
